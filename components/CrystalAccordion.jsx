@@ -7,11 +7,22 @@ const CrystalAccordion = ({ crystal }) => {
 
   return (
     // <div className="border border-gray-200 rounded mb-2">
+<<<<<<< HEAD
     <div className='rounded-xl shadow-md relative'>
+=======
+    <div className="rounded-xl shadow-md relative">
+>>>>>>> c70744fa96618f5a01331da77dbb1952ecb30fe4
       <button
         className="w-full flex justify-between items-center p-4 text-left font-medium bg-gray-100 focus:outline-none"
         onClick={() => setIsOpen(!isOpen)}
       >
+<<<<<<< HEAD
+=======
+        {/* <span>
+          {`${crystal.resourceNumber} Rough Weight: ${crystal.originalWeight}
+       Machine: ${crystal.machineColor} ${crystal.machineClarity} Grade: ${crystal.roughColor} ${crystal.roughClarity}`}
+        </span> */}
+>>>>>>> c70744fa96618f5a01331da77dbb1952ecb30fe4
         <div className="p-4">
           <div className="text-left md:text-center lg:text-left mb-6">
             <h3 className="text-xl font-bold">{crystal.resourceNumber}</h3>
@@ -22,6 +33,7 @@ const CrystalAccordion = ({ crystal }) => {
 
           <div className="flex justify-center gap-4 text-gray-500 mb-4">
             <p>
+<<<<<<< HEAD
               <span className="md:hidden lg:inline">Grade</span>
               {crystal.roughColor} {crystal.roughClarity}
             </p>
@@ -29,6 +41,16 @@ const CrystalAccordion = ({ crystal }) => {
               <span className="md:hidden lg:inline">Machine</span>
              {crystal.machineColor}{" "}
               {crystal.machineClarity}
+=======
+              <span className="md:hidden lg:inline">Grade </span>
+              {/* <FaDiamond className="inline mr-2" />  */}
+              💎 {crystal.roughColor} {crystal.roughClarity}
+            </p>
+            <p>
+              <span className="md:hidden lg:inline">Machine </span>
+              {/* <FaDiamond className="inline mr-2" /> */}
+              {crystal.machineColor} {crystal.machineClarity}
+>>>>>>> c70744fa96618f5a01331da77dbb1952ecb30fe4
             </p>
           </div>
         </div>
