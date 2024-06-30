@@ -1,9 +1,7 @@
-
+import AddCrystalForm from "@/components/AddCrystalForm";
 
 function AddCrystalPage() {
-  return (
-    <div>AddCrystalPage</div>
-  )
+  return <AddCrystalForm />;
 }
 
-export default AddCrystalPage
+export default AddCrystalPage;
