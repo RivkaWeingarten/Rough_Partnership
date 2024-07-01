@@ -1,4 +1,5 @@
 import React from "react";
+import options from "@/roughOptionsPrograms.json";
 
 function AddCrystalForm() {
   return (
@@ -11,45 +12,125 @@ function AddCrystalForm() {
                 Add Rough Diamond
               </h2>
 
-              <div className="mb-4">
-                <label className="block text-gray-700 font-bold mb-2">
+              <div className="mb-4 flex flex-wrap items-center space-y-4 sm:space-y-0 sm:space-x-4">
+                <label className="block text-gray-700 font-bold mb-2 sm:mb-0 sm:w-auto w-full">
                   Resource Number
                 </label>
                 <input
                   type="text"
-                  id="name"
-                  name="name"
-                  className="border rounded w-full py-2 px-3 mb-2"
+                  id="resourceNumber"
+                  name="resourceNumber"
+                  className="border rounded w-full sm:w-24 py-2 px-3"
                   placeholder="240-1"
                   required
                 />
-              </div>
-
-              <div className="mb-4">
-                <label className="block text-gray-700 font-bold mb-2">
+                <label className="block text-gray-700 font-bold mb-2 sm:mb-0 sm:w-auto w-full">
                   Rough Weight
                 </label>
                 <input
                   type="text"
                   id="roughWeight"
                   name="roughWeight"
-                  className="border rounded w-full py-2 px-3 mb-2"
+                  className="border rounded w-full sm:w-24
+                   py-2 px-3"
                   placeholder="3.25"
                   required
                 />
               </div>
 
-              <div className="mb-4">
+              <div className="mb-4 flex flex-wrap items-center space-y-4 sm:space-y-0 sm:space-x-4">
+                <label className="block text-gray-700 font-bold mb-2 sm:mb-0 sm:w-auto w-full">
+                  Rough Color
+                </label>
+                <select
+                  id="roughColor"
+                  name="roughColor"
+                  className="border rounded w-full sm:w-20 py-2 px-3"
+                  required
+                >
+                  <option value="D">D</option>
+                  <option value="E">E</option>
+                  <option value="F">F</option>
+                  <option value="G">G</option>
+                  <option value="H">H</option>
+                  <option value="I">I</option>
+                  <option value="J">J</option>
+                  <option value="K">K</option>
+                  <option value="L">L</option>
+                </select>
+                <label className="block text-gray-700 font-bold mb-2 sm:mb-0 sm:w-auto w-full">
+                  Rough Clarity
+                </label>
+                <select
+                  id="roughClarity"
+                  name="roughClarity"
+                  className="border rounded w-full sm:w-20 py-2 px-3"
+                  required
+                >
+                  <option value="IF">IF</option>
+                  <option value="VVS1">VVS1</option>
+                  <option value="VVS2">VVS2</option>
+                  <option value="VS1">VS1</option>
+                  <option value="VS2">VS2</option>
+                  <option value="SI1">SI1</option>
+                  <option value="SI2">SI2</option>
+                  <option value="I1">I1</option>
+                  <option value="I2">I2</option>
+                </select>
+              </div>
+
+              <div className="mb-4 flex flex-wrap items-center space-y-4 sm:space-y-0 sm:space-x-4">
+                <label className="block text-gray-700 font-bold mb-2 sm:mb-0 sm:w-auto w-full">
+                  Machine Color
+                </label>
+                <select
+                  id="machineColor"
+                  name="machineColor"
+                  className="border rounded w-full sm:w-20 py-2 px-3"
+                  required
+                >
+                  <option value="D">D</option>
+                  <option value="E">E</option>
+                  <option value="F">F</option>
+                  <option value="G">G</option>
+                  <option value="H">H</option>
+                  <option value="I">I</option>
+                  <option value="J">J</option>
+                  <option value="K">K</option>
+                  <option value="L">L</option>
+                </select>
+                <label className="block text-gray-700 font-bold mb-2 sm:mb-0 sm:w-auto w-full">
+                  Machine Clarity
+                </label>
+                <select
+                  id="machineClarity"
+                  name="machineClarity"
+                  className="border rounded w-full sm:w-20 py-2 px-3"
+                  required
+                >
+                  <option value="IF">IF</option>
+                  <option value="VVS1">VVS1</option>
+                  <option value="VVS2">VVS2</option>
+                  <option value="VS1">VS1</option>
+                  <option value="VS2">VS2</option>
+                  <option value="SI1">SI1</option>
+                  <option value="SI2">SI2</option>
+                  <option value="I1">I1</option>
+                  <option value="I2">I2</option>
+                </select>
+              </div>
+
+              <div className="mb-4 flex flex-wrap items-center space-y-4 sm:space-y-0 sm:space-x-4">
                 <label
-                  for="type"
-                  className="block text-gray-700 font-bold mb-2"
+                  htmlFor="type"
+                  className="block text-gray-700 font-bold mb-2 sm:mb-0 sm:w-auto w-full"
                 >
                   Fluorescence
                 </label>
                 <select
                   id="fluor"
                   name="fluor"
-                  className="border rounded w-full py-2 px-3"
+                  className="border rounded w-full sm:w-48 py-2 px-3"
                   required
                 >
                   <option value="None">None</option>
@@ -61,6 +142,7 @@ function AddCrystalForm() {
                   <option value="Strong Yellow">Strong Yellow</option>
                 </select>
               </div>
+
               <div className="mb-4">
                 <label
                   for="description"
@@ -72,7 +154,7 @@ function AddCrystalForm() {
                   id="description"
                   name="description"
                   className="border rounded w-full py-2 px-3"
-                  rows="4"
+                  rows="2"
                   placeholder="Add an optional description "
                 ></textarea>
               </div>
@@ -151,7 +233,7 @@ function AddCrystalForm() {
                   className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-full w-full focus:outline-none focus:shadow-outline"
                   type="submit"
                 >
-                  Add Property
+                  Add Rough Diamond
                 </button>
               </div>
             </form>

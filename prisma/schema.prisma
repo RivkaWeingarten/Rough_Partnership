@@ -39,12 +39,16 @@ model Lot {
   RoughCrystals RoughCrystal[]
 }
 
+
 model RoughCrystal {
   id          Int          @id @default(autoincrement())
   resourceNumber String     @unique
   roughWeight Float
-  color       String
-  clarity     String
+  roughColor       String
+  roughClarity     String
+  machineColor       String
+  machineClarity     String
+  roughDescription String
   fluor       String
   stones      String
   lotId       Int
