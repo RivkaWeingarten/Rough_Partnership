@@ -1,13 +1,29 @@
+'use client'
 import React from "react";
 import options from "@/roughOptionsPrograms.json";
+import { toast } from "react-toastify";
+import addCrystal from "@/app/actions/addCrystal";
 
 function AddCrystalForm() {
+  const addAction = async (event) => {
+    event.preventDefault();
+  
+    const formData = new FormData(event.target);
+    const { data, error } = await addCrystal(formData)
+    if (error) {
+      toast.error(error);
+    } else {
+      toast.success('Transaction added');
+    
+    };
+  };
   return (
+   
     <>
       <section className="bg-blue-50">
         <div className="container m-auto max-w-2xl py-24">
           <div className="bg-white px-6 py-8 mb-4 shadow-md rounded-md border m-4 md:m-0">
-            <form>
+            <form onSubmit ={addAction}>
               <h2 className="text-3xl text-center font-semibold mb-6">
                 Add Rough Diamond
               </h2>
@@ -40,7 +56,7 @@ function AddCrystalForm() {
 
               <div className="mb-4 flex flex-wrap items-center space-y-4 sm:space-y-0 sm:space-x-4">
                 <label className="block text-gray-700 font-bold mb-2 sm:mb-0 sm:w-auto w-full">
-                  Rough Color
+                  Rough Color {'  '}
                 </label>
                 <select
                   id="roughColor"
@@ -59,7 +75,7 @@ function AddCrystalForm() {
                   <option value="L">L</option>
                 </select>
                 <label className="block text-gray-700 font-bold mb-2 sm:mb-0 sm:w-auto w-full">
-                  Rough Clarity
+                  Rough Clarity  
                 </label>
                 <select
                   id="roughClarity"
@@ -173,7 +189,7 @@ function AddCrystalForm() {
                             type="number"
                             id={option.program}
                             name={`options.${option.program}`}
-                            step={0.25}
+                            step={0.05}
                             className="border rounded w-full py-2 px-3 sm:w-[150px]"
                           />
                         </div>
@@ -189,28 +205,7 @@ function AddCrystalForm() {
 ))} 
           
 
-                {/* Line 2 */}
-                <div className="flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4 items-center mt-4">
-                  <div className="flex items-center w-full sm:w-auto sm:min-w-[150px]">
-                    <label htmlFor="7_PI_option" className="mr-2 sm:w-[150px]">
-                      7-PI@
-                    </label>
-                    <input
-                      type="number"
-                      id="7_PI"
-                      name="options.7_PI"
-                      step={0.25}
-                      className="border rounded w-full py-2 px-3 sm:w-[150px]"
-                    />
-                  </div>
-                  <div className="flex-grow">
-                    <textarea
-                      className="block w-full p-2 border border-gray-300 rounded-md"
-                      rows={1}
-                      placeholder="Enter notes here"
-                    ></textarea>
-                  </div>
-                </div>
+         
               </div>
 
               <div className="mb-4">

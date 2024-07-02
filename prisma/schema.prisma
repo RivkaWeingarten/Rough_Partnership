@@ -53,8 +53,11 @@ model RoughCrystal {
   stones      String
   lotId       Int
   lot         Lot          @relation(fields: [lotId], references: [id])
+  userId  String
+
+  @@index([userId])
   options     Option[]
-   createdAt DateTime @default(now())
+  createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
