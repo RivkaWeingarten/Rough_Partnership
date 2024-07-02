@@ -5,6 +5,7 @@ CREATE TABLE "User" (
     "email" TEXT NOT NULL,
     "name" TEXT,
     "imageUrl" TEXT,
+    "role" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -28,19 +29,23 @@ CREATE TABLE "Lot" (
 );
 
 -- CreateTable
-CREATE TABLE "RoughCrystal" (
+CREATE TABLE "Roughcrystal" (
     "id" SERIAL NOT NULL,
     "resourceNumber" TEXT NOT NULL,
     "roughWeight" DOUBLE PRECISION NOT NULL,
-    "color" TEXT NOT NULL,
-    "clarity" TEXT NOT NULL,
+    "roughColor" TEXT NOT NULL,
+    "roughClarity" TEXT NOT NULL,
+    "machineColor" TEXT NOT NULL,
+    "machineClarity" TEXT NOT NULL,
+    "roughDescription" TEXT NOT NULL,
     "fluor" TEXT NOT NULL,
-    "stones" TEXT NOT NULL,
-    "lotId" INTEGER NOT NULL,
+    "stones" TEXT,
+    "lotId" INTEGER,
+    "userId" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "RoughCrystal_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Roughcrystal_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -86,13 +91,16 @@ CREATE UNIQUE INDEX "User_clerkUserId_key" ON "User"("clerkUserId");
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "RoughCrystal_resourceNumber_key" ON "RoughCrystal"("resourceNumber");
+CREATE UNIQUE INDEX "Roughcrystal_resourceNumber_key" ON "Roughcrystal"("resourceNumber");
+
+-- CreateIndex
+CREATE INDEX "Roughcrystal_userId_idx" ON "Roughcrystal"("userId");
 
 -- AddForeignKey
-ALTER TABLE "RoughCrystal" ADD CONSTRAINT "RoughCrystal_lotId_fkey" FOREIGN KEY ("lotId") REFERENCES "Lot"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Roughcrystal" ADD CONSTRAINT "Roughcrystal_lotId_fkey" FOREIGN KEY ("lotId") REFERENCES "Lot"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Option" ADD CONSTRAINT "Option_roughCrystalId_fkey" FOREIGN KEY ("roughCrystalId") REFERENCES "RoughCrystal"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Option" ADD CONSTRAINT "Option_roughCrystalId_fkey" FOREIGN KEY ("roughCrystalId") REFERENCES "Roughcrystal"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Diamond" ADD CONSTRAINT "Diamond_optionId_fkey" FOREIGN KEY ("optionId") REFERENCES "Option"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

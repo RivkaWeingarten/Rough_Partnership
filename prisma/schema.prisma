@@ -14,57 +14,50 @@ datasource db {
 }
 
 model User {
-  id String @id @default(uuid())
-  clerkUserId String @unique
-  email String @unique
-  name String?
-  imageUrl String?
-  role String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String   @id @default(uuid())
+  clerkUserId String   @unique
+  email       String   @unique
+  name        String?
+  imageUrl    String?
+  role        String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-
+  Rough Rough[]
 }
+
 model Lot {
-  id          Int          @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
   lotName     String
   type        String
   totalStones Int
   totalCts    Float
   source      String
- createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
   origin      String
   notes       String?
-  RoughCrystals RoughCrystal[]
 }
 
-
-model RoughCrystal {
-  id          Int          @id @default(autoincrement())
-  resourceNumber String     @unique
-  roughWeight Float
+model Rough {
+  id               Int      @id @default(autoincrement())
+  resourceNumber   String   @unique
+  roughWeight      Float
   roughColor       String
   roughClarity     String
-  machineColor       String
-  machineClarity     String
+  machineColor     String
+  machineClarity   String
   roughDescription String
-  fluor       String
-  stones      String
-  lotId       Int
-  lot         Lot          @relation(fields: [lotId], references: [id])
-  userId  String
-
-  @@index([userId])
-  options     Option[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  fluor            String
+  stones           String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  userId           String
+  user             User     @relation(fields: [userId], references: [clerkUserId])
 }
 
 model Option {
-  id          Int          @id @default(autoincrement())
-  roughCrystalId Int
-  roughCrystal RoughCrystal @relation(fields: [roughCrystalId], references: [id])
+  id          Int       @id @default(autoincrement())
   estProgram  String
   estShape    String
   estColor    String
@@ -78,18 +71,18 @@ model Option {
 }
 
 model Diamond {
-  id             Int     @id @default(autoincrement())
-  optionId       Int
-  option         Option  @relation(fields: [optionId], references: [id])
-  estimatedWeight Float
-  estimatedColor  String
+  id               Int      @id @default(autoincrement())
+  optionId         Int
+  option           Option   @relation(fields: [optionId], references: [id])
+  estimatedWeight  Float
+  estimatedColor   String
   estimatedClarity String
   estimatedProgram String
-  estDiscount     Float
-  location        String
-  isPolished      Boolean
-  inventory       String
-  giaNumber       String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  estDiscount      Float
+  location         String
+  isPolished       Boolean
+  inventory        String
+  giaNumber        String
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 }
