@@ -117,16 +117,7 @@ async function addCrystal(formData) {
   const fluor = fluorValue.toString();
   const description = descriptionValue ? descriptionValue.toString() : '';
 
-// const roughData ={
-//           resourceNumber,
-//           roughWeight,
-//           roughColor,
-//           roughClarity,
-//           machineColor,
-//           machineClarity,
-//           fluor,
-//           roughDescription: description}
-// return {data:roughData}
+
          
   const { userId } = auth();
 
@@ -148,7 +139,7 @@ async function addCrystal(formData) {
         roughDescription: description,
         userId,
         
-        // userId: Replace with your user identification logic if needed
+  
       },
     });
 
