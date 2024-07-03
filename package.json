@@ -10,10 +10,12 @@
     "postinstall": "prisma generate --schema= prisma/schema.prisma"
   },
   "dependencies": {
+    "@clerk/clerk-sdk-node": "^5.0.14",
     "@clerk/nextjs": "^5.1.6",
     "@material-tailwind/react": "^2.1.9",
     "@prisma/client": "^5.16.1",
     "@tanstack/react-table": "^8.17.3",
+    "axios": "^1.7.2",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "lucide-react": "^0.395.0",
