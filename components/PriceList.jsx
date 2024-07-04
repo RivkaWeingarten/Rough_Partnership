@@ -1,20 +1,20 @@
-'use client'
+"use client";
 
-import { useState } from 'react';
-import getRap from "@/app/actions/getRap";// Adjust the path as per your file structure
-import formatNumberCommas from '@/app/actions/formatNumberCommas';
+import { useState } from "react";
+import getRap from "@/app/actions/getRap"; // Adjust the path as per your file structure
+// import formatNumberCommas from '@/app/actions/formatNumberCommas';
+import { formatNumberCommas, totalPriceWithDiscount } from "@/lib/utils";
 const PriceList = () => {
   const [priceData, setPriceData] = useState(null);
   const [error, setError] = useState(null);
 
   const fetchPriceData = async () => {
     try {
-      const data = await getRap('Round', 1.50, 'G', 'VS1'); // Call getRap function with desired parameters
+      const data = await getRap("Round", 1.5, "G", "VS1"); // Call getRap function with desired parameters
       setPriceData(data);
-   
     } catch (error) {
-      console.error('Error fetching price data:', error);
-      setError('Failed to fetch price data');
+      console.error("Error fetching price data:", error);
+      setError("Failed to fetch price data");
     }
   };
 
@@ -24,8 +24,14 @@ const PriceList = () => {
       {error && <p>{error}</p>}
       {priceData && (
         <div>
-         <p>List per Carat: {formatNumberCommas(priceData.caratprice)}</p>
-          {/* <p>Total List: {priceData.totalList}</p> */}
+          <p>List per Carat: {formatNumberCommas(priceData.caratprice)}</p>
+          <p>
+            {" "}
+            total$:{" "}
+            {formatNumberCommas(
+              totalPriceWithDiscount(priceData.caratprice, 30, 1.5)
+            )}
+          </p>
         </div>
       )}
     </div>
@@ -53,8 +59,6 @@ export default PriceList;
 //       setError('Failed to fetch price data');
 //     }
 //   };
-
-  
 
 //   return (
 //     <div>

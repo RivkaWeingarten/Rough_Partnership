@@ -1,4 +1,4 @@
-// import React from 'react'
+import React from "react";
 import Link from "next/link";
 import Hero from "@/components/Hero";
 import InfoBoxes from "@/components/InfoBoxes";
@@ -6,14 +6,24 @@ import Footer from "@/components/Footer";
 import Guest from "@/components/Guest";
 import { SignedIn, SignedOut } from "@clerk/nextjs";
 import PriceList from "@/components/PriceList";
+import { checkUser } from "@/lib/checkUser";
+import EmailToAuthorize from "@/components/EmailToAuthorize";
 
-function HomePage() {
+async function HomePage() {
+  const user = await checkUser();
+
   return (
     <div>
       <SignedIn>
-        <Hero />
-        <InfoBoxes />
-        <PriceList />
+        {user.role === "tbd" ? (
+          <EmailToAuthorize userEmail={user.email} userName={user?.name} />
+        ) : (
+          <>
+            <Hero />
+            <InfoBoxes />
+            <PriceList />
+          </>
+        )}
       </SignedIn>
       <SignedOut>
         <Guest />
