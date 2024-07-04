@@ -11,7 +11,15 @@ import EmailToAuthorize from "@/components/EmailToAuthorize";
 
 async function HomePage() {
   const user = await checkUser();
-
+  if (!user) {
+    return (
+      <>
+        <SignedOut>
+          <Guest />
+        </SignedOut>
+      </>
+    );
+  }
   return (
     <div>
       <SignedIn>
@@ -25,9 +33,9 @@ async function HomePage() {
           </>
         )}
       </SignedIn>
-      <SignedOut>
+      {/* <SignedOut>
         <Guest />
-      </SignedOut>
+      </SignedOut> */}
       <Footer />
     </div>
   );

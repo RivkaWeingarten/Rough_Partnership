@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Option" ADD COLUMN     "estWeight" DOUBLE PRECISION NOT NULL DEFAULT 0.50;

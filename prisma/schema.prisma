@@ -38,10 +38,9 @@ model Lot {
   origin      String
   notes       String?
 }
-
 model Rough {
-  id               Int      @id @default(autoincrement())
-  resourceNumber   String   @unique
+  id               Int       @id @default(autoincrement())
+  resourceNumber   String    @unique
   roughWeight      Float
   roughColor       String
   roughClarity     String
@@ -50,24 +49,31 @@ model Rough {
   roughDescription String
   fluor            String
   stones           String?
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
   userId           String
-  user             User     @relation(fields: [userId], references: [clerkUserId])
+  user             User      @relation(fields: [userId], references: [clerkUserId])
+  options          Option[]  
 }
 
 model Option {
-  id          Int       @id @default(autoincrement())
-  estProgram  String
-  estShape    String
-  estColor    String
-  estClarity  String
-  estFluor    String
-  estPrice    Float
-  estList     Float
-  estDiscount Float
-  selected    Boolean
-  diamonds    Diamond[]
+  id             Int    @id @default(autoincrement())
+  resourceNumber String
+  ABC            String
+  estWeight      Float @default(0.50)
+  estProgram     String
+  notes          String
+  estShape       String
+  estColor       String
+  estClarity     String
+  estFluor       String
+  estPrice       Float
+  estList        Float
+  estDiscount    Float
+  selected       Boolean
+  diamonds       Diamond[]
+  roughResourceNumber String
+  rough          Rough   @relation(fields: [roughResourceNumber], references: [resourceNumber])
 }
 
 model Diamond {
