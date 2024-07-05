@@ -9,7 +9,9 @@ async function addCrystal(formData) {
   const roughColorValue = formData.get("roughColor");
   const roughClarityValue = formData.get("roughClarity");
   const machineColorValue = formData.get("machineColor");
-  const machineClarityValue = formData.get("machineClarity");
+  const plusMinusRColorValue = formData.get("plusMinusRColor");
+  const plusMinusRClarityValue = formData.get("plusMinusRClarity");
+  // const machineClarityValue = formData.get("machineClarity");
   const fluorValue = formData.get("fluor");
   const descriptionValue = formData.get("description");
   const optionsData = formData.get("optionsData");
@@ -26,7 +28,9 @@ async function addCrystal(formData) {
   const roughColor = roughColorValue.toString();
   const roughClarity = roughClarityValue.toString();
   const machineColor = machineColorValue.toString();
-  const machineClarity = machineClarityValue.toString();
+  const plusMinusRColor = plusMinusRColorValue.toString();
+  const plusMinusRClarity = plusMinusRClarityValue.toString();
+  // const machineClarity = machineClarityValue.toString();
   const fluor = fluorValue.toString();
   const description = descriptionValue ? descriptionValue.toString() : "";
 
@@ -42,12 +46,14 @@ async function addCrystal(formData) {
         resourceNumber,
         roughWeight,
         roughColor,
+        plusMinusRColor,
+        plusMinusRClarity,
         roughClarity,
         machineColor,
-        machineClarity,
         fluor,
         roughDescription: description,
         userId,
+        lotNumber: "test",
       },
     });
 
@@ -77,8 +83,8 @@ async function addCrystal(formData) {
 
     const options = optionsData.map((option) => ({
       roughResourceNumber: resourceNumber,
-      resourceNumber: resourceNumber + "A", // Assuming the same resource number with 'A'
-      ABC: "A",
+      resourceNumber: resourceNumber + option.ABC, // Assuming the same resource number with 'A'
+      ABC: option.ABC,
       estProgram: option.program,
       estShape: option.estShape,
       estColor: roughColor,

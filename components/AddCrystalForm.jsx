@@ -46,7 +46,7 @@ function AddCrystalForm() {
                 estClarity
               );
               return {
-                stoneId: stone.id,
+                ABC: stone.id,
                 program: option.program,
                 estShape: option.estShape,
                 estWeight,
@@ -115,7 +115,7 @@ function AddCrystalForm() {
             </div>
             <div className="mb-4 flex flex-wrap items-center space-y-4 sm:space-y-0 sm:space-x-4">
               <label className="block text-gray-700 font-bold mb-2 sm:mb-0 sm:w-auto w-full">
-                Rough Color {"  "}
+                ZL Color {"  "}
               </label>
               <select
                 id="roughColor"
@@ -133,8 +133,20 @@ function AddCrystalForm() {
                 <option value="K">K</option>
                 <option value="L">L</option>
               </select>
-              <label className="block text-gray-700 font-bold mb-2 sm:mb-0 sm:w-auto w-full">
-                Rough Clarity
+
+              <select
+                id="plusMinusRColor"
+                name="plusMinusRColor"
+                className="border rounded w-full sm:w-20 py-2 px-3"
+                placeholder="+-"
+              >
+                <option value=""></option>
+                <option value="+">+</option>
+                <option value="-">-</option>
+              </select>
+
+              <label className="block text-gray-700 font-bold mb-1 sm:mb-0 sm:w-auto w-full">
+                ZL Clarity
               </label>
               <select
                 id="roughClarity"
@@ -152,46 +164,29 @@ function AddCrystalForm() {
                 <option value="I1">I1</option>
                 <option value="I2">I2</option>
               </select>
+
+              <select
+                id="plusMinusRClarity"
+                name="plusMinusRClarity"
+                className="border rounded w-full sm:w-20 py-2 px-3"
+                placeholder="+-"
+              >
+                <option value=""></option>
+                <option value="+">+</option>
+                <option value="-">-</option>
+              </select>
             </div>
             <div className="mb-4 flex flex-wrap items-center space-y-4 sm:space-y-0 sm:space-x-4">
               <label className="block text-gray-700 font-bold mb-2 sm:mb-0 sm:w-auto w-full">
                 Machine Color
               </label>
-              <select
+
+              <input
+                type="text"
                 id="machineColor"
                 name="machineColor"
-                className="border rounded w-full sm:w-20 py-2 px-3"
-                required
-              >
-                <option value="D">D</option>
-                <option value="E">E</option>
-                <option value="F">F</option>
-                <option value="G">G</option>
-                <option value="H">H</option>
-                <option value="I">I</option>
-                <option value="J">J</option>
-                <option value="K">K</option>
-                <option value="L">L</option>
-              </select>
-              <label className="block text-gray-700 font-bold mb-2 sm:mb-0 sm:w-auto w-full">
-                Machine Clarity
-              </label>
-              <select
-                id="machineClarity"
-                name="machineClarity"
-                className="border rounded w-full sm:w-20 py-2 px-3"
-                required
-              >
-                <option value="IF">IF</option>
-                <option value="VVS1">VVS1</option>
-                <option value="VVS2">VVS2</option>
-                <option value="VS1">VS1</option>
-                <option value="VS2">VS2</option>
-                <option value="SI1">SI1</option>
-                <option value="SI2">SI2</option>
-                <option value="I1">I1</option>
-                <option value="I2">I2</option>
-              </select>
+                className="border rounded w-full sm:w-24 py-2 px-3"
+              />
             </div>
             <div className="mb-4 flex flex-wrap items-center space-y-4 sm:space-y-0 sm:space-x-4">
               <label
@@ -214,6 +209,21 @@ function AddCrystalForm() {
                 <option value="Medium Yellow">Medium Yellow</option>
                 <option value="Strong Yellow">Strong Yellow</option>
               </select>
+            </div>
+            <div className="mb-4">
+              <label
+                htmlFor="description"
+                className="block text-gray-700 font-bold mb-2"
+              >
+                Description
+              </label>
+              <textarea
+                id="description"
+                name="description"
+                className="border rounded w-full py-2 px-3"
+                rows="2"
+                placeholder="Add an optional description"
+              ></textarea>
             </div>
 
             {stones.map((stone, index) => (
@@ -268,7 +278,7 @@ function AddCrystalForm() {
                     className="mt-4 bg-blue-500 text-white py-2 px-4 rounded"
                     onClick={addStone}
                   >
-                    Add B Stone
+                    Add Stone Part
                   </button>
                 )}
               </div>

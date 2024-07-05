@@ -28,7 +28,7 @@ model User {
 
 model Lot {
   id          Int      @id @default(autoincrement())
-  lotName     String
+  lotName     String @ unique
   type        String
   totalStones Int
   totalCts    Float
@@ -37,15 +37,20 @@ model Lot {
   updatedAt   DateTime @updatedAt
   origin      String
   notes       String?
+  rough       Rough  []
 }
+  
 model Rough {
   id               Int       @id @default(autoincrement())
   resourceNumber   String    @unique
+  lotNumber        String
   roughWeight      Float
   roughColor       String
+  plusMinusRColor   String?
   roughClarity     String
+  plusMinusRClarity   String?
   machineColor     String
-  machineClarity   String
+  machineClarity   String?
   roughDescription String
   fluor            String
   stones           String?
@@ -53,7 +58,8 @@ model Rough {
   updatedAt        DateTime  @updatedAt
   userId           String
   user             User      @relation(fields: [userId], references: [clerkUserId])
-  options          Option[]  
+  options          Option[] 
+  lot              Lot      @relation(fields: [lotNumber], references: [lotName]) 
 }
 
 model Option {
@@ -62,10 +68,12 @@ model Option {
   ABC            String
   estWeight      Float @default(0.50)
   estProgram     String
-  notes          String
+  notes          String ?
   estShape       String
   estColor       String
+  plusMinusRColor String?
   estClarity     String
+  plusMinusRClarity String?
   estFluor       String
   estPrice       Float
   estList        Float
