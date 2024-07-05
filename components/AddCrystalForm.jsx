@@ -3,6 +3,7 @@ import React from "react";
 import options from "@/roughOptionsPrograms.json";
 import { toast } from "react-toastify";
 import addCrystal from "@/app/actions/addCrystal";
+import getRap from "@/app/actions/getRap"; // Make sure you import getRap correctly
 
 function AddCrystalForm() {
   const addAction = async (event) => {
@@ -13,19 +14,31 @@ function AddCrystalForm() {
       console.log(key, value);
     }
 
-    // Create an array to hold option data
-    const optionsData = options
-      .map((option) => {
-        const estShape = option.estShape;
-        const estWeight = formData.get(`estWeight.${option.program}`);
-        const notes = formData.get(`notes.${option.program}`);
+    // Create an array to hold option data with promises to fetch price data
+    const optionsDataPromises = options.map(async (option) => {
+      const estShape = option.estShape;
+      const estWeight = formData.get(`estWeight.${option.program}`);
+      const notes = formData.get(`notes.${option.program}`);
+      const estColor = formData.get("roughColor");
+      const estClarity = formData.get("roughClarity");
 
-        // Check if estWeight is present to include this option
-        return estWeight
-          ? { program: option.program, estShape, estWeight, notes }
-          : null;
-      })
-      .filter(Boolean);
+      // Fetch price data if estWeight is present
+      if (estWeight) {
+        try {
+          const list = await getRap(estShape, estWeight, estColor, estClarity);
+          return { program: option.program, estShape, estWeight, notes, list };
+        } catch (error) {
+          console.error("Error fetching price data:", error);
+          return null;
+        }
+      }
+      return null;
+    });
+
+    // Wait for all promises to resolve
+    const optionsData = (await Promise.all(optionsDataPromises)).filter(
+      Boolean
+    );
 
     console.log(`optionsData:`, optionsData);
 

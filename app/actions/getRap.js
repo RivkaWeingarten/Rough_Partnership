@@ -1,6 +1,5 @@
-
-'use server'
-import axios from 'axios';
+"use server";
+import axios from "axios";
 import { auth } from "@clerk/nextjs/server";
 
 // async function fetchLoginToken() {
@@ -9,7 +8,7 @@ import { auth } from "@clerk/nextjs/server";
 //   const tokenUrl = "https://authztoken.api.rapaport.com/api/get";
 
 //   try {
-//     const { userId } = auth(); 
+//     const { userId } = auth();
 
 //     // Ensure the user is authenticated via Clerk
 //     if (!userId) {
@@ -59,20 +58,28 @@ async function fetchLoginToken() {
 async function getRap(shape, size, color, clarity) {
   try {
     const token = await fetchLoginToken(); // Get access token
-    console.log(`token ${token}`)
-  
+    if (
+      shape.toUpperCase() === "RB" ||
+      shape.toUpperCase() === "ROUND" ||
+      shape.toUpperCase() === "BR" ||
+      shape.toUpperCase() === "ROUND BRILLIANT"
+    ) {
+      shape = "Round";
+    } else {
+      shape = "Pear";
+    }
 
-    const url = 'https://technet.rapnetapis.com/pricelist/api/Prices';
+    const url = "https://technet.rapnetapis.com/pricelist/api/Prices";
     const response = await axios.get(url, {
       params: { shape, size, color, clarity },
       headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
+        "Content-Type": "application/json",
+        Accept: "application/json",
         Authorization: `Bearer ${token}`,
       },
     });
 
-        // Assuming response.data contains an array or object with 'caratprice' field
+    // Assuming response.data contains an array or object with 'caratprice' field
     const caratprice = response.data.caratprice;
     const listPrice = {
       caratprice: caratprice,
@@ -81,7 +88,7 @@ async function getRap(shape, size, color, clarity) {
 
     return listPrice;
   } catch (error) {
-    console.error('Error fetching data from RapNet:', error);
+    console.error("Error fetching data from RapNet:", error);
     throw error; // Handle or log the error as needed
   }
 }

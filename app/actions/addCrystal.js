@@ -85,7 +85,7 @@ async function addCrystal(formData) {
       estClarity: roughClarity,
       estFluor: fluor,
       estPrice: 0, // Default value, update as needed
-      estList: 0, // Default value, update as needed
+      estList: parseFloat(option.list.caratprice.toString()), // Default value, update as needed
       estDiscount: 0, // Default value, update as needed
       selected: false, // Default value, update as needed
       notes: option.notes,

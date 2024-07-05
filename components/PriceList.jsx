@@ -10,7 +10,7 @@ const PriceList = () => {
 
   const fetchPriceData = async () => {
     try {
-      const data = await getRap("Round", 1.5, "G", "VS1"); // Call getRap function with desired parameters
+      const data = await getRap("ov", 1.5, "I", "VS1"); // Call getRap function with desired parameters
       setPriceData(data);
     } catch (error) {
       console.error("Error fetching price data:", error);

@@ -5,4 +5,4 @@
 
 */
 -- AlterTable
-ALTER TABLE "Option" ADD COLUMN     "notes" TEXT  ;
+ALTER TABLE "Option" ADD COLUMN  "notes" TEXT  ;
