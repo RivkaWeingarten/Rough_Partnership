@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Option" ADD COLUMN     "totalEstList" DOUBLE PRECISION NOT NULL DEFAULT 1000;

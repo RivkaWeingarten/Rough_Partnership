@@ -40,6 +40,16 @@ async function addCrystal(formData) {
     return { error: "User not found" };
   }
 
+  const resourceNumberData = await db.rough.findUnique({
+    where: {
+      resourceNumber: resourceNumber,
+    },
+  });
+
+  if (resourceNumberData) {
+    return resourceNumberData;
+  }
+
   try {
     const roughData = await db.rough.create({
       data: {
@@ -57,28 +67,6 @@ async function addCrystal(formData) {
       },
     });
 
-    // const options = [];
-    // formData.forEach((value, key) => {
-    //   if (key.startsWith("options.") && value) {
-    //     const optionName = key.split(".")[1];
-    //     options.push({
-    //       roughResourceNumber: resourceNumber,
-    //       resourceNumber: resourceNumber + "A",
-    //       ABC: "A",
-    //       estProgram: optionName,
-    //       estShape: estShape,
-    //       estColor: roughColor,
-    //       estClarity: roughClarity,
-    //       estFluor: fluor,
-    //       estPrice: 0,
-    //       estList: 0,
-    //       estDiscount: 0,
-    //       selected: false,
-    //       roughCrystalId: roughData.id,
-    //     });
-    //   }
-    // });
-
     const optionsData = JSON.parse(formData.get("optionsData"));
 
     const options = optionsData.map((option) => ({
@@ -92,6 +80,7 @@ async function addCrystal(formData) {
       estFluor: fluor,
       estPrice: 0, // Default value, update as needed
       estList: parseFloat(option.list.caratprice.toString()), // Default value, update as needed
+      totalEstList: parseFloat(option.list.totalListPrice.toString()), // Default value, update as needed
       estDiscount: 0, // Default value, update as needed
       selected: false, // Default value, update as needed
       notes: option.notes,
