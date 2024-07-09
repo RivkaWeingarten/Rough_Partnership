@@ -65,61 +65,70 @@ function AddCrystalForm() {
     const formData = new FormData(event.target);
 
     const optionsDataPromises = stones
-      .map((stone) => {
-        return options.map(async (option) => {
-          const estWeight = formData.get(
-            `estWeight.${stone.id}.${option.program}`
-          );
-          const notes = formData.get(`notes.${stone.id}.${option.program}`);
-
-          const estPlusMinusRColor =
-            formData.get(`estPlusMinusRColor.${stone.id}`) === "" &&
-            formData.get(`estColor.${stone.id}`) === ""
-              ? formData.get("plusMinusRColor")
-              : formData.get(`estPlusMinusRColor.${stone.id}`);
-
-          const estPlusMinusRClarity =
-            formData.get(`estPlusMinusRClarity.${stone.id}`) === "" &&
-            formData.get(`estClarity.${stone.id}`) === ""
-              ? formData.get("plusMinusRClarity")
-              : formData.get(`estPlusMinusRClarity.${stone.id}`);
-
-          const estColor =
-            formData.get(`estColor.${stone.id}`) === ""
-              ? formData.get("roughColor")
-              : formData.get(`estColor.${stone.id}`);
-          const estClarity =
-            formData.get(`estClarity.${stone.id}`) === ""
-              ? formData.get("roughClarity")
-              : formData.get(`estClarity.${stone.id}`);
-
-          if (estWeight) {
-            try {
-              const list = await getRap(
-                option.estShape,
-                estWeight,
-                estColor,
-                estClarity
+      .map(async (stone) => {
+        // Instead of mapping over options, we now need to fetch the selected program for each stone
+        const selectedPrograms = options
+          .map(async (option) => {
+            const selectedProgramValue = formData.get(
+              `option.program.${stone.id}.${option.program}`
+            );
+            if (selectedProgramValue === option.program) {
+              // Proceed with the logic for the selected program
+              const estWeight = formData.get(
+                `estWeight.${stone.id}.${selectedProgramValue}`
               );
-              return {
-                ABC: stone.id,
-                program: option.program,
-                estShape: option.estShape,
-                estWeight,
-                estColor,
-                estClarity,
-                notes,
-                list,
-                estPlusMinusRColor,
-                estPlusMinusRClarity,
-              };
-            } catch (error) {
-              console.error("Error fetching price data:", error);
-              return null;
+              const notes = formData.get(
+                `notes.${stone.id}.${selectedProgramValue}`
+              );
+
+              const EstplusMinusRColor =
+                formData.get(`estPlusMinusRColor.${stone.id}`) === "" &&
+                formData.get(`estColor.${stone.id}`) === ""
+                  ? formData.get("plusMinusRColor")
+                  : formData.get(`estPlusMinusRColor.${stone.id}`);
+              const EstplusMinusRClarity =
+                formData.get(`estPlusMinusRClarity.${stone.id}`) === "" &&
+                formData.get(`estClarity.${stone.id}`) === ""
+                  ? formData.get("plusMinusRClarity")
+                  : formData.get(`estPlusMinusRClarity.${stone.id}`);
+              const estColor =
+                formData.get(`estColor.${stone.id}`) === ""
+                  ? formData.get("roughColor")
+                  : formData.get(`estColor.${stone.id}`);
+              const estClarity =
+                formData.get(`estClarity.${stone.id}`) === ""
+                  ? formData.get("roughClarity")
+                  : formData.get(`estClarity.${stone.id}`);
+
+              if (estWeight) {
+                try {
+                  const list = await getRap(
+                    option.estShape,
+                    estWeight,
+                    estColor,
+                    estClarity
+                  );
+                  return {
+                    ABC: stone.id,
+                    program: selectedProgramValue,
+                    estShape: option.estShape,
+                    estWeight,
+                    notes,
+                    list,
+                    EstplusMinusRColor,
+                    EstplusMinusRClarity,
+                  };
+                } catch (error) {
+                  console.error("Error fetching price data:", error);
+                  return null;
+                }
+              }
             }
-          }
-          return null;
-        });
+            return null;
+          })
+          .filter(Boolean); // Filter out null values if no program was selected or no estWeight
+
+        return selectedPrograms;
       })
       .flat();
 
@@ -325,8 +334,8 @@ function AddCrystalForm() {
                         </select>
 
                         <select
-                          id={`estPlusMinusRColor.${stone.id}`}
-                          name={`estPlusMinusRColor.${stone.id}`}
+                          id={`EstplusMinusRColor.${stone.id}`}
+                          name={`EstplusMinusRColor.${stone.id}`}
                           className="border rounded w-full sm:w-20 py-2 px-3"
                           placeholder="+-"
                         >
@@ -356,8 +365,8 @@ function AddCrystalForm() {
                         </select>
 
                         <select
-                          id="estPlusMinusRClarity"
-                          name="estPlusMinusRClarity"
+                          id="plusMinusRClarity"
+                          name="plusMinusRClarity"
                           className="border rounded w-full sm:w-20 py-2 px-3"
                           placeholder="+-"
                         >
@@ -387,12 +396,13 @@ function AddCrystalForm() {
                                 </option>
                               ))}
                             </select>
+
                             <input
                               type="number"
                               step="0.01"
                               id={`estWeight.${stone.id}.${option.program}`}
                               name={`estWeight.${stone.id}.${option.program}`}
-                              className="border rounded w-full py-2 px-3 sm:w-[150px]"
+                              className="border rounded w-full py-1 px-3 sm:w-[150px]"
                               placeholder="Carats"
                             />
                           </div>
