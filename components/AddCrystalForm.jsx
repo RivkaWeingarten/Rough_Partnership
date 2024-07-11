@@ -66,11 +66,9 @@ function AddCrystalForm() {
 
     const optionsDataPromises = stones
       .map((stone) => {
-        return options.map(async (option) => {
-          const estWeight = formData.get(
-            `estWeight.${stone.id}.${option.program}`
-          );
-          const notes = formData.get(`notes.${stone.id}.${option.program}`);
+        return options.map(async (option, index) => {
+          const estWeight = formData.get(`estWeight.${stone.id}.${index}`);
+          const notes = formData.get(`notes.${stone.id}.${index}`);
 
           const estPlusMinusRColor =
             formData.get(`estPlusMinusRColor.${stone.id}`) === "" &&
@@ -95,16 +93,27 @@ function AddCrystalForm() {
 
           if (estWeight) {
             try {
+              const program = options.find(
+                (option) =>
+                  option.program ===
+                  formData.get(`estProgram.${stone.id}.${index}`)
+              );
+              const estShape = program ? program.estShape : null;
+              const estProgram = program ? program.program : null;
+              console.log(
+                `shape is ${estShape} program is ${estProgram} est weight is ${estWeight}`
+              );
               const list = await getRap(
-                option.estShape,
+                // option.estShape,
+                estShape,
                 estWeight,
                 estColor,
                 estClarity
               );
               return {
                 ABC: stone.id,
-                program: option.program,
-                estShape: option.estShape,
+                program: estProgram,
+                estShape,
                 estWeight,
                 estColor,
                 estClarity,
@@ -366,7 +375,7 @@ function AddCrystalForm() {
                           <option value="-">-</option>
                         </select>
                       </div>
-                      {options.map((option) => (
+                      {options.map((option, index) => (
                         <div
                           key={option.program}
                           className="flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4 items-center"
@@ -377,7 +386,7 @@ function AddCrystalForm() {
                             </label> */}
 
                             <select
-                              name={`option.program.${stone.id}.${option.program}`}
+                              name={`estProgram.${stone.id}.${index}`}
                               className="border rounded w-full py-1 px-3 sm:w-[150px]"
                               defaultValue={option.program}
                             >
@@ -390,8 +399,8 @@ function AddCrystalForm() {
                             <input
                               type="number"
                               step="0.01"
-                              id={`estWeight.${stone.id}.${option.program}`}
-                              name={`estWeight.${stone.id}.${option.program}`}
+                              id={`estWeight.${stone.id}.${index}`}
+                              name={`estWeight.${stone.id}.${index}`}
                               className="border rounded w-full py-2 px-3 sm:w-[150px]"
                               placeholder="Carats"
                             />
