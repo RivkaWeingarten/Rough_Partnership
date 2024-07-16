@@ -90,6 +90,8 @@ function AddCrystalForm() {
               );
               return {
                 ABC: stone.id,
+                estColor,
+                estClarity,
                 program: option.program,
                 estShape: option.estShape,
                 estWeight,

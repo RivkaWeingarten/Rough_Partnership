@@ -30,7 +30,7 @@ async function addCrystal(formData) {
   const machineColor = machineColorValue.toString();
   const plusMinusRColor = plusMinusRColorValue.toString();
   const plusMinusRClarity = plusMinusRClarityValue.toString();
-  // const machineClarity = machineClarityValue.toString();
+  const machineClarity = ""
   const fluor = fluorValue.toString();
   const description = descriptionValue ? descriptionValue.toString() : "";
 
@@ -60,6 +60,7 @@ async function addCrystal(formData) {
         plusMinusRClarity,
         roughClarity,
         machineColor,
+        machineClarity,
         fluor,
         roughDescription: description,
         userId,
