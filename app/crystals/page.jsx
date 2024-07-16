@@ -8,16 +8,16 @@ async function CrystalsPage() {
     <div>
       <section className="px-4 py-6">
         <div className="container mx-auto px-4 py-6">
-          {resourceNumbers.length === 0 ? (
+          {resourceNumbers?.length === 0 ? (
             <p>No diamonds in this lot</p>
           ) : (
             <div className="grid grid-cols-1 gap-6">
-              {resourceNumbers.map((resourceNumber) => (
+              {resourceNumbers?.map((resourceNumber) => (
                 <CrystalAccordion
                   key={resourceNumber.id}
                   resourceNumber={resourceNumber}
                 />
-              ))}
+                              ))}
             </div>
           )}
         </div>

@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import OptionsSelector from "./OptionsSelector";
 
 const CrystalAccordion = ({ resourceNumber }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -36,7 +37,13 @@ const CrystalAccordion = ({ resourceNumber }) => {
         </button>
         {isOpen && (
           <div className="p-4 bg-white w-full">
-            {resourceNumber.description}
+            {resourceNumber.options.length === 0 ? (
+              <h3 className="text-lg font-bold mb-2">
+                No options for {resourceNumber.resourceNumber}
+              </h3>
+            ) : (
+              <OptionsSelector options={resourceNumber.options} />
+            )}
           </div>
         )}
       </div>
