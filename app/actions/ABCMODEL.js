@@ -35,9 +35,9 @@ function addOrStone(currentStonePart) {
 console.log(result);
 
 <div className="flex flex-wrap items-center space-y-2 sm:space-y-0 sm:space-x-4">
-  <label className="flex items-center w-full sm:w-auto sm:min-w-[150px]">
+  <input className="flex items-center w-full sm:w-auto sm:min-w-[150px]">
     {option.program}@
-  </label>
+  </input>
   {/* <input
   type="text"
   value={option.program}
