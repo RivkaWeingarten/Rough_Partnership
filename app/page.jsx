@@ -5,7 +5,7 @@ import InfoBoxes from "@/components/InfoBoxes";
 import Footer from "@/components/Footer";
 import Guest from "@/components/Guest";
 import { SignedIn, SignedOut } from "@clerk/nextjs";
-import PriceList from "@/components/PriceList";
+
 import { checkUser } from "@/lib/checkUser";
 import EmailToAuthorize from "@/components/EmailToAuthorize";
 
@@ -29,7 +29,8 @@ async function HomePage() {
           <>
             <Hero />
             <InfoBoxes />
-            <PriceList />
+
+
           </>
         )}
       </SignedIn>

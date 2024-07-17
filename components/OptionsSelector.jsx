@@ -1,5 +1,3 @@
-
-"use client";
 import { useState } from "react";
 
 const OptionCard = ({ option, isActive, onClick, onInputChange }) => {
@@ -80,8 +78,15 @@ const OptionsSelector = ({ options }) => {
     }, {})
   );
 
-  // Sort options by totalEstList in descending order
-  const sortedOptions = options.sort((a, b) => b.totalEstList - a.totalEstList);
+  // Group options by resource number
+  const groupedOptions = options.reduce((acc, option) => {
+    const resourceNumber = option.resourceNumber;
+    if (!acc[resourceNumber]) {
+      acc[resourceNumber] = [];
+    }
+    acc[resourceNumber].push(option);
+    return acc;
+  }, {});
 
   const handleInputChange = (optionId, newValue) => {
     setOptionValues({
@@ -91,7 +96,7 @@ const OptionsSelector = ({ options }) => {
 
     // Update the totalEstList based on the new value
     // You can add your own logic here to update the totalEstList
-    const updatedOptions = sortedOptions.map((option) =>
+    const updatedOptions = options.map((option) =>
       option.id === optionId
         ? { ...option, totalEstList: newValue * option.pricePerCt } // Example logic
         : option
@@ -102,24 +107,31 @@ const OptionsSelector = ({ options }) => {
   };
 
   return (
-    <div className="flex flex-wrap">
-      {sortedOptions.map((option) => (
-        <label key={option.id} className="cursor-pointer">
-          <input
-            type="radio"
-            name="option"
-            value={option.id}
-            checked={activeOption === option.id}
-            onChange={() => setActiveOption(option.id)}
-            className="hidden"
-          />
-          <OptionCard
-            option={option}
-            isActive={activeOption === option.id}
-            onClick={() => setActiveOption(option.id)}
-            onInputChange={handleInputChange}
-          />
-        </label>
+    <div>
+      {Object.entries(groupedOptions).map(([resourceNumber, groupedOptions]) => (
+        <div key={resourceNumber} className="mb-6">
+          <h2 className="text-2xl font-bold mb-4">Resource {resourceNumber}</h2>
+          <div className="flex flex-wrap">
+            {groupedOptions.map((option) => (
+              <label key={option.id} className="cursor-pointer">
+                <input
+                  type="radio"
+                  name={`option-${resourceNumber}`}
+                  value={option.id}
+                  checked={activeOption === option.id}
+                  onChange={() => setActiveOption(option.id)}
+                  className="hidden"
+                />
+                <OptionCard
+                  option={option}
+                  isActive={activeOption === option.id}
+                  onClick={() => setActiveOption(option.id)}
+                  onInputChange={handleInputChange}
+                />
+              </label>
+            ))}
+          </div>
+        </div>
       ))}
     </div>
   );
