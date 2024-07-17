@@ -1,6 +1,19 @@
+'use client'
+
 import { useState } from "react";
+import { totalPriceWithDiscount } from "@/lib/utils";
+
+// Assume totalPriceWithDiscount is imported or defined above
+
 
 const OptionCard = ({ option, isActive, onClick, onInputChange }) => {
+  const [inputValue, setInputValue] = useState("");
+
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      onInputChange(option.id, inputValue);
+    }
+  };
   return (
     <div
       className={`w-48 bg-white rounded-lg shadow-md p-6 cursor-pointer mb-8 hover:bg-green-100 focus:outline-none focus:shadow-outline-green ${
@@ -10,6 +23,7 @@ const OptionCard = ({ option, isActive, onClick, onInputChange }) => {
       onClick={onClick}
       onKeyDown={(e) => e.key === " " && onClick()}
     >
+      
       <div className="flex justify-between items-center mb-3">
         <h1 className="uppercase text-base tracking-wide text-blue-800 my-2">
           {option.EstProgram}
@@ -64,6 +78,13 @@ const OptionCard = ({ option, isActive, onClick, onInputChange }) => {
           className="mt-1 p-2 border border-gray-300 rounded w-full"
           onChange={(e) => onInputChange(option.id, e.target.value)}
         />
+        {isActive && (
+          <button>
+            <div className={`bg-green-400 p-6 rounded-sm shadow-sm inline-block text-white rounded-lg px-4 py-2 hover:opacity-80`}>
+              Select
+            </div>
+          </button>
+        )}
       </div>
     </div>
   );
@@ -95,15 +116,31 @@ const OptionsSelector = ({ options }) => {
     });
 
     // Update the totalEstList based on the new value
-    // You can add your own logic here to update the totalEstList
-    const updatedOptions = options.map((option) =>
-      option.id === optionId
-        ? { ...option, totalEstList: newValue * option.pricePerCt } // Example logic
-        : option
-    );
+    const updatedOptions = options.map((option) => {
+      if (option.id === optionId) {
+        const newPrice = totalPriceWithDiscount(option.totalEstList, newValue || option.estDisc, option.estSize);
+        return { ...option, totalEstList: newPrice, estDisc: newValue };
+      }
+      return option;
+    });
 
-    // Update the options with the new totalEstList
-    setOptions(updatedOptions);
+    // Sort the options by totalEstList in descending order
+    const sortedOptions = updatedOptions.sort((a, b) => b.totalEstList - a.totalEstList);
+
+    // Update the options with the new totalEstList and sorted order
+    // setOptions(sortedOptions);
+
+    // Simulate updating the database (you'll need to replace this with your actual update logic)
+    updateOptionInDatabase(optionId, newValue || 0, sortedOptions);
+
+    // Show a message to the user
+    alert(`Updated option ${optionId} to new discount ${newValue || 0}`);
+  };
+
+  // Simulate updating the database (replace with your actual update logic)
+  const updateOptionInDatabase = (optionId, newValue, updatedOptions) => {
+    console.log("Updating database for option ID:", optionId, "with new discount:", newValue);
+    // Add your database update logic here
   };
 
   return (
