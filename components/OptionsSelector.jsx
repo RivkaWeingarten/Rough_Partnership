@@ -3,8 +3,6 @@
 import { useState } from "react";
 import { totalPriceWithDiscount } from "@/lib/utils";
 
-// Assume totalPriceWithDiscount is imported or defined above
-
 
 const OptionCard = ({ option, isActive, onClick, onInputChange }) => {
   const [inputValue, setInputValue] = useState("");
@@ -118,7 +116,7 @@ const OptionsSelector = ({ options }) => {
     // Update the totalEstList based on the new value
     const updatedOptions = options.map((option) => {
       if (option.id === optionId) {
-        const newPrice = totalPriceWithDiscount(option.totalEstList, newValue || option.estDisc, option.estSize);
+        const newPrice = totalPriceWithDiscount(option.estList, newValue || option.estDisc, option.estSize);
         return { ...option, totalEstList: newPrice, estDisc: newValue };
       }
       return option;
