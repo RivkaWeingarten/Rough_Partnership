@@ -56,3 +56,6 @@ console.log(result);
     placeholder="Carats"
   />
 </div>;
+// import { totalPriceWithDiscount } from "@/lib/utils";
+
+// console.log(totalPriceWithDiscount(1000,10,2.25))

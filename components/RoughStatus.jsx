@@ -9,7 +9,7 @@ export default function RoughStatus({ options }) {
           'px-4 py-2 rounded-lg text-blue-500 font-bold text-right',
           {
             'bg-white': background === 'white',
-            'bg-green-300': background === 'green-300',
+            'bg-green-100': background === 'green-100',
             'bg-yellow-200': background === 'yellow-200',
           }
         )}
@@ -26,10 +26,10 @@ export default function RoughStatus({ options }) {
     if (options.length === 0) {
       background = 'white';
       statusText = 'No options yet';
-    } else if (options.some(option => option.isSelected)) {
-      const selectedOption = options.find(option => option.isSelected);
-      background = 'green-300';
-      statusText = selectedOption.text;
+    } else if (options.some(option => option.selected)) {
+      const selectedOption = options.find(option => option.selected);
+      background = 'green-100';
+      statusText = `${selectedOption.estProgram} @ ${selectedOption.estWeight}`
     } else {
       background = 'yellow-200';
       statusText = 'Please select';

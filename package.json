@@ -2,6 +2,7 @@
   "name": "new-rough-partnership",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -9,6 +10,8 @@
     "lint": "next lint",
     "postinstall": "prisma generate --schema= prisma/schema.prisma"
   },
+
+  
   "dependencies": {
     "@clerk/clerk-sdk-node": "^5.0.14",
     "@clerk/nextjs": "^5.1.6",
