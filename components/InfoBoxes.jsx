@@ -1,38 +1,45 @@
+
+
+// Desc: This component is used to display the information boxes on the home page.
 import React from "react";
 import InfoBox from "./InfoBox";
+import getLots from "@/app/actions/getLots";
+import { formatNumberCommas } from "@/lib/utils";
 
-function InfoBoxes() {
+async function InfoBoxes() {
+  const { lots, error } = await getLots();
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
   return (
     <section>
       <div className="container-xl lg:container m-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 rounded-lg">
-          <InfoBox
-            heading="See all the Rough Diamonds"
-            backgroundColor="bg-gray-100"
-            buttonInfo={{
-              text: "View Diamonds",
-              link: "/crystals",
-              backgroundColor: "bg-black",
-            }}
-          >
-            See all the diamonds planned and marked
-          </InfoBox>
-
-          <InfoBox
-            heading="Plan the rough Diamond"
-            backgroundColor="bg-blue-100"
-            buttonInfo={{
-              text: "Plan a Diamond",
-              link: "/crystals",
-              backgroundColor: "bg-blue-500",
-            }}
-          >
-            See all the the options for planning.
-          </InfoBox>
+          {lots && lots.length > 0 ? (
+            lots.map((lot) => (
+              <div key={lot.id} lot={lot}>
+                <InfoBox
+                  heading={lot.lotName}
+                  backgroundColor="bg-gray-100"
+                  buttonInfo={{
+                  
+                    link: "/crystals",
+                    backgroundColor: "bg-black",
+                  }}
+                >
+               Value: {formatNumberCommas(lot.totalPrice)} {""}
+               Total List: {formatNumberCommas(lot.totalTtlList)}
+                </InfoBox>
+              </div>
+            ))
+          ) : (
+            <div>No lots available</div>
+          )}
         </div>
       </div>
     </section>
   );
 }
-
 export default InfoBoxes;

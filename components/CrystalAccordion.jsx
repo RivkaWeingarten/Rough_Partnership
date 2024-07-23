@@ -31,7 +31,10 @@ const CrystalAccordion = ({ resourceNumber }) => {
               </span>
               <span className="inline md:hidden text-black-500"> 💎</span>
              
-          
+              <span className="text-gray-500  md:inline">
+             {resourceNumber.roughDescription}
+              </span>
+              <span className="inline md:hidden text-black-500"> 💎</span>
             <RoughStatus options={resourceNumber.options} />
             <span className="text-xl md:self-center">{isOpen ? "−" : "+"}</span>
           </div>

@@ -10,6 +10,7 @@ import { checkUser } from "@/lib/checkUser";
 import EmailToAuthorize from "@/components/EmailToAuthorize";
 
 async function HomePage() {
+
   const user = await checkUser();
   if (!user) {
     return (
@@ -25,18 +26,16 @@ async function HomePage() {
       <SignedIn>
         {user.role === "tbd" ? (
           <EmailToAuthorize userEmail={user.email} userName={user?.name} />
-        ) : (
-          <>
+        ) 
+        :
+         (
+          <div>
             <Hero />
-            <InfoBoxes />
-
-
-          </>
+            <InfoBoxes/>
+          </div>
         )}
       </SignedIn>
-      {/* <SignedOut>
-        <Guest />
-      </SignedOut> */}
+   
       <Footer />
     </div>
   );

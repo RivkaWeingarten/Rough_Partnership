@@ -1,7 +1,7 @@
 import { clerkMiddleware } from "@clerk/nextjs/server";
 
 const middleware = async (req) => {
-  console.log('Middleware is running');
+
   return clerkMiddleware()(req);
 };
 

@@ -59,6 +59,7 @@ model Rough {
   userId           String
   user             User      @relation(fields: [userId], references: [clerkUserId])
   options          Option[] 
+  diamonds         Diamond[]
   lot              Lot      @relation(fields: [lotNumber], references: [lotName]) 
 }
 
@@ -89,6 +90,11 @@ model Diamond {
   id               Int      @id @default(autoincrement())
   optionId         Int
   option           Option   @relation(fields: [optionId], references: [id])
+  resourceNumber   String @unique
+  roughResourceNumber String
+  rough             Rough   @relation(fields: [roughResourceNumber], references: [resourceNumber])
+  estTotalPrice         Float
+  actTotalList          Float 
   estimatedWeight  Float
   estimatedColor   String
   estimatedClarity String
@@ -100,4 +106,17 @@ model Diamond {
   giaNumber        String
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
+  transaction 
+}
+
+model transactions {
+ id  @id @default(autoincrement())
+ resourceNumber
+  userId           String
+  user             User      @relation(fields: [userId], references: [clerkUserId])
+  transactionType String
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  diamond 
+
 }

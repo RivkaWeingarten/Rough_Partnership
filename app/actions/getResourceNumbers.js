@@ -17,6 +17,7 @@ async function getResourceNumbers() {
       },
       include: {
         options: true,
+        diamonds:true,
       },
     });
 

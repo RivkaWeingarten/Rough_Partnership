@@ -3,9 +3,38 @@
 import { useState } from "react";
 import { totalPriceWithDiscount, formatNumberCommas } from "@/lib/utils";
 import changeOptionData from "@/app/actions/updateOption";
+import addDiamondRecord from "@/app/actions/addDiamond";
 import { toast } from "react-toastify";
 
-const OptionCard = ({ option, isActive, onClick, onInputChange }) => {
+// Move the updateOptionInDatabase function outside the component
+const updateOptionInDatabase = async (optionId, updateData) => {
+  try {
+    // Optionally parse certain fields to float
+    const parsedData = {
+      ...updateData,
+      estDiscount: updateData.estDiscount
+        ? parseFloat(updateData.estDiscount)
+        : updateData.estDiscount,
+      estPrice: updateData.estPrice
+        ? parseFloat(updateData.estPrice)
+        : updateData.estPrice,
+    };
+
+    const updatedOption = await changeOptionData(optionId, parsedData);
+    toast.success(`Option updated successfully`);
+    return updatedOption;
+  } catch (error) {
+    toast.error(`Error updating option: ${error.message}`);
+  }
+};
+
+const OptionCard = ({
+  option,
+  isActive,
+  onClick,
+  onInputChange,
+  updateOptionInDatabase, // Add this prop
+}) => {
   const [inputValue, setInputValue] = useState("");
 
   const handleKeyPress = (e) => {
@@ -14,46 +43,34 @@ const OptionCard = ({ option, isActive, onClick, onInputChange }) => {
     }
   };
 
-  const updateOptionInDatabase = async (optionId, updateData) => {
-    try {
-      // Optionally parse certain fields to float
-      const parsedData = {
-        ...updateData,
-        estDiscount: updateData.estDiscount
-          ? parseFloat(updateData.estDiscount)
-          : updateData.estDiscount,
-        estPrice: updateData.estPrice
-          ? parseFloat(updateData.estPrice)
-          : updateData.estPrice,
-      };
-
-      const updatedOption = await changeOptionData(optionId, parsedData);
-      toast.success(`Option updated successfully`);
-      return updatedOption;
-    } catch (error) {
-      toast.error(`Error updating option: ${error.message}`);
-    }
-  };
-
   const handleSelectClick = async () => {
     try {
       // Update the option to be isSelected: true
-       updateOptionInDatabase(option.id, { selected: true });
+      updateOptionInDatabase(option.id, { selected: true });
 
       // Create a new record in the Diamonds table
-      // const newDiamondData = {
-      //   // Add necessary fields here
-      //   // For example:
-      //   carat: option.estWeight,
-      //   color: option.color,
-      //   clarity: option.clarity,
-      //   estDiscount: option.estDiscount,
-      //   estPrice: option.estPrice,
-      //   isSelected: true,
-      //   // Add other fields as needed
-      // };
+      const newDiamondData = {
+        // Add necessary fields here
+        // For example:
+        optionId: option.id,
+        estimatedWeight: option.estWeight,
+        estimatedColor: option.estColor,
+        estimatedClarity: option.estClarity,
+        estDiscount: parseFloat(option.estDiscount),
+        estTotalPrice: parseFloat(option.estPrice),
+        actTotalList:parseFloat(option.totalEstList),
+         estimatedProgram: option.estProgram,
+        resourceNumber: option.resourceNumber,
+        location: 'WDM BOTSWANA',
+        isPolished: false,
+        inventory: 'NA',
+        giaNumber: 'NA',
+        roughResourceNumber: option.roughResourceNumber,
 
-      // const newDiamond = await addDiamondRecord(newDiamondData);
+        // Add other fields as needed
+      };
+
+      const newDiamond = await addDiamondRecord(newDiamondData);
       toast.success('Diamond record added successfully');
       console.log(newDiamond);
     } catch (error) {
@@ -83,6 +100,11 @@ const OptionCard = ({ option, isActive, onClick, onInputChange }) => {
                 Select
               </div>
             </button>
+            
+          </>
+        )}
+
+{option.selected && (
             <svg
               className="w-6 h-6"
               width="200px"
@@ -113,8 +135,7 @@ const OptionCard = ({ option, isActive, onClick, onInputChange }) => {
                 </g>
               </g>
             </svg>
-          </>
-        )}
+          )}
       </div>
 
       <div className="mb-1 font-semibold text-blue-800">
@@ -207,12 +228,8 @@ const OptionsSelector = ({ options }) => {
 
     // Update the options with the new totalEstList and sorted order
     setAllOptions(sortedOptions);
-
-    // Show a message to the user
-    alert(`Updated option ${optionId} to new discount ${newDiscount || 0}`);
+       
   };
-
-
 
   return (
     <div>
@@ -238,6 +255,7 @@ const OptionsSelector = ({ options }) => {
                     isActive={activeOption === option.id}
                     onClick={() => setActiveOption(option.id)}
                     onInputChange={handleInputChange}
+                    updateOptionInDatabase={updateOptionInDatabase} // Pass the function as a prop
                   />
                 </label>
               ))}
