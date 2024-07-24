@@ -17,7 +17,8 @@ function AddCrystalForm() {
     let currentStonePartLetter = currentStonePart[0];
     if (currentStonePartLetter === "A") return "B";
     if (currentStonePartLetter === "B") return "C";
-    return "Only ABC stones allowed";
+    if (currentStonePartLetter === "C") return "D";
+    return "Only ABCD stones allowed";
   };
 
   const addOrStone = (currentStonePart) => {
@@ -31,10 +32,20 @@ function AddCrystalForm() {
   const addStone = () => {
     const lastStoneId = stones[stones.length - 1].id;
     const newId = nextStonePart(lastStoneId);
-    if (newId <= "C") {
+    if (newId <= "D") {
       setStones([...stones, { id: newId, visible: true }]);
     } else {
-      toast.error("Only A, B, and C stones are allowed.");
+      toast.error("Only A, B, C and D stones are allowed.");
+    }
+  };
+
+  const addStoneProgram = () => {
+    const lastStoneId = stones[stones.length - 1].id;
+    const newId = nextStonePart(lastStoneId);
+    if (newId <= "D") {
+      setStones([...stones, { id: newId, visible: true }]);
+    } else {
+      toast.error("Only A, B, C, and D stones are allowed.");
     }
   };
 
@@ -104,7 +115,6 @@ function AddCrystalForm() {
                 `shape is ${estShape} program is ${estProgram} est weight is ${estWeight}`
               );
               const list = await getRap(
-           
                 estShape,
                 estWeight,
                 estColor,
@@ -378,42 +388,48 @@ function AddCrystalForm() {
                       {options.map((option, index) => (
                         <div
                           key={option.program}
-                          className="flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4 items-center"
+                          className="flex flex-wrap items-center space-x-2 sm:space-x-4"
                         >
-                          <div className="flex flex-wrap items-center space-y-2 sm:space-y-0 sm:space-x-4">
-                            {/* <label className="flex items-center w-full sm:w-auto sm:min-w-[150px]">
-                              {option.program}@
-                            </label> */}
+                          <label className="">{stone.id}</label>
 
-                            <select
-                              name={`estProgram.${stone.id}.${index}`}
-                              className="border rounded w-full py-1 px-3 sm:w-[150px]"
-                              defaultValue={option.program}
-                            >
-                              {options.map((opt) => (
-                                <option key={opt.program} value={opt.program}>
-                                  {opt.program}
-                                </option>
-                              ))}
-                            </select>
-                            <input
-                              type="number"
-                              step="0.01"
-                              id={`estWeight.${stone.id}.${index}`}
-                              name={`estWeight.${stone.id}.${index}`}
-                              className="border rounded w-full py-2 px-3 sm:w-[150px]"
-                              placeholder="Carats"
-                            />
-                          </div>
-                          <div className="flex-grow">
-                            <textarea
-                              id={`notes.${stone.id}.${option.program}`}
-                              name={`notes.${stone.id}.${option.program}`}
-                              className="block w-full p-2 border border-gray-300 rounded-md"
-                              rows={1}
-                              placeholder="Notes"
-                            />
-                          </div>
+                          <select
+                            name={`estProgram.${stone.id}.${index}`}
+                            className="border rounded py-1 px-2 w-full sm:w-auto sm:min-w-[100px]"
+                            defaultValue={option.program}
+                          >
+                            {options.map((opt) => (
+                              <option key={opt.program} value={opt.program}>
+                                {opt.program}
+                              </option>
+                            ))}
+                          </select>
+
+                          <input
+                            type="number"
+                            step="0.01"
+                            id={`estWeight.${stone.id}.${index}`}
+                            name={`estWeight.${stone.id}.${index}`}
+                            className="border rounded py-1 px-2 w-full sm:w-[100px]"
+                            placeholder="Carats"
+                            maxLength={10} // To ensure that it only allows up to 10 characters
+                          />
+
+                          <textarea
+                            id={`notes.${stone.id}.${option.program}`}
+                            name={`notes.${stone.id}.${option.program}`}
+                            className="block w-full p-2 border border-gray-300 rounded-md sm:w-auto sm:min-w-[200px]"
+                            rows={1}
+                            placeholder="Notes"
+                          />
+
+                          <button
+                            type="button"
+                            
+                            onClick={addStoneProgram}
+                            className="bg-purple-500 text-white px-3 py-2 rounded"
+                          >
+                            +{nextStonePart(stone.id)}
+                          </button>
                         </div>
                       ))}
                     </div>

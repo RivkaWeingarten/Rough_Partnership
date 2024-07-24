@@ -25,7 +25,7 @@ async function InfoBoxes() {
                   backgroundColor="bg-gray-100"
                   buttonInfo={{
                   
-                    link: "/crystals",
+                    link: `/crystals/${lot.lotName}`,
                     backgroundColor: "bg-black",
                   }}
                 >
