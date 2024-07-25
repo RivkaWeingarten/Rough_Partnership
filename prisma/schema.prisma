@@ -67,6 +67,7 @@ model Option {
   id             Int    @id @default(autoincrement())
   resourceNumber String
   ABC            String
+  optionNumber   Int ?
   estWeight      Float @default(0.50)
   estProgram     String
   notes          String ?
@@ -106,17 +107,6 @@ model Diamond {
   giaNumber        String
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
-  transaction 
-}
-
-model transactions {
- id  @id @default(autoincrement())
- resourceNumber
-  userId           String
-  user             User      @relation(fields: [userId], references: [clerkUserId])
-  transactionType String
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-  diamond 
 
 }
+

@@ -74,6 +74,7 @@ async function addCrystal(formData) {
       roughResourceNumber: resourceNumber,
       resourceNumber: resourceNumber + option.ABC, // Assuming the same resource number with 'A'
       ABC: option.ABC,
+      optionNumber: option.optionNumber,
       estProgram: option.program,
       estShape: option.estShape,
       estColor: option.estColor,

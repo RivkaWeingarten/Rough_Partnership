@@ -9,6 +9,15 @@ function AddCrystalForm() {
   const [stones, setStones] = useState([{ id: "A", visible: true }]);
   const [currentModel, setCurrentModel] = useState(1);
 
+  const [visibleStones, setVisibleStones] = useState({});
+
+  const unhideStone = (letter, index) => {
+    setVisibleStones((prev) => ({
+      ...prev,
+      [`${letter}-${index}`]: true,
+    }));
+  };
+
   const nextModel = () => {
     setCurrentModel((prevModel) => prevModel + 1);
   };
@@ -66,7 +75,7 @@ function AddCrystalForm() {
   const toggleVisibility = (id) => {
     setStones(
       stones.map((stone) =>
-        stone.id === id ? { ...stone, visible: !stone.visible } : stone
+        letter === id ? { ...stone, visible: !stone.visible } : stone
       )
     );
   };
@@ -75,44 +84,52 @@ function AddCrystalForm() {
     event.preventDefault();
     const formData = new FormData(event.target);
 
-    const optionsDataPromises = stones
-      .map((stone) => {
-        return options.map(async (option, index) => {
-          const estWeight = formData.get(`estWeight.${stone.id}.${index}`);
-          const notes = formData.get(`notes.${stone.id}.${index}`);
+    const letters = ["A", "B", "C", "D"];
+
+    const optionsDataPromises = stones.flatMap((stone) => {
+      return options.flatMap((option, index) => {
+        return letters.map(async (letter) => {
+          const estWeight = formData.get(`estWeight.${letter}.${index}`);
+          const notes = formData.get(`notes.${letter}.${index}`);
 
           const estPlusMinusRColor =
-            formData.get(`estPlusMinusRColor.${stone.id}`) === "" &&
-            formData.get(`estColor.${stone.id}`) === ""
+            formData.get(`estPlusMinusRColor.${letter}`) === "" &&
+            !formData.has(`estPlusMinusRColor.${letter}`) &&
+            (formData.get(`estColor.${letter}`) === "" ||
+              !formData.has(`estColor.${letter}`))
               ? formData.get("plusMinusRColor")
-              : formData.get(`estPlusMinusRColor.${stone.id}`);
+              : formData.get(`estPlusMinusRColor.${letter}`);
 
           const estPlusMinusRClarity =
-            formData.get(`estPlusMinusRClarity.${stone.id}`) === "" &&
-            formData.get(`estClarity.${stone.id}`) === ""
+            (formData.get(`estPlusMinusRClarity.${letter}`) === "" ||
+              !formData.has(`estPlusMinusRClarity.${letter}`)) &&
+            (formData.get(`estClarity.${letter}`) === "" ||
+              !formData.has(`estClarity.${letter}`))
               ? formData.get("plusMinusRClarity")
-              : formData.get(`estPlusMinusRClarity.${stone.id}`);
+              : formData.get(`estPlusMinusRClarity.${letter}`);
 
           const estColor =
-            formData.get(`estColor.${stone.id}`) === ""
+            formData.get(`estColor.${letter}`) === "" ||
+            !formData.has(!`estColor.${letter}`)
               ? formData.get("roughColor")
-              : formData.get(`estColor.${stone.id}`);
+              : formData.get(`estColor.${letter}`);
           const estClarity =
-            formData.get(`estClarity.${stone.id}`) === ""
+            formData.get(`estClarity.${letter}`) === "" ||
+            !formData.has(!`estClarity.${letter}`)
               ? formData.get("roughClarity")
-              : formData.get(`estClarity.${stone.id}`);
+              : formData.get(`estClarity.${letter}`);
 
           if (estWeight) {
             try {
               const program = options.find(
-                (option) =>
-                  option.program ===
-                  formData.get(`estProgram.${stone.id}.${index}`)
+                (opt) =>
+                  opt.program === formData.get(`estProgram.${letter}.${index}`)
               );
               const estShape = program ? program.estShape : null;
               const estProgram = program ? program.program : null;
               console.log(
-                `shape is ${estShape} program is ${estProgram} est weight is ${estWeight}`
+                `shape is ${estShape} program is ${estProgram} est weight is ${estWeight}
+                  est color is ${estColor} est clarity is ${estClarity} `
               );
               const list = await getRap(
                 estShape,
@@ -120,8 +137,10 @@ function AddCrystalForm() {
                 estColor,
                 estClarity
               );
+              console.log(list);
               return {
-                ABC: stone.id,
+                ABC: letter,
+                optionNumber: index + 1,
                 program: estProgram,
                 estShape,
                 estWeight,
@@ -139,8 +158,8 @@ function AddCrystalForm() {
           }
           return null;
         });
-      })
-      .flat();
+      });
+    });
 
     const optionsData = (await Promise.all(optionsDataPromises)).filter(
       Boolean
@@ -386,50 +405,67 @@ function AddCrystalForm() {
                         </select>
                       </div>
                       {options.map((option, index) => (
-                        <div
-                          key={option.program}
-                          className="flex flex-wrap items-center space-x-2 sm:space-x-4"
-                        >
-                          <label className="">{stone.id}</label>
+                        <div key={index}>
+                          <div className="border-b-2 border-black text-0xl text-center">
+                            <span className="bg-transparent px-5">
+                              {/* # {index + 1} */}
+                            </span>
+                          </div>
+                          {["A", "B", "C", "D"].map((letter) => (
+                            <div
+                              key={`${option.program}-${letter}-${index}`}
+                              className={`flex flex-wrap items-center space-x-2 sm:space-x-4 ${
+                                letter !== "A" &&
+                                !visibleStones[`${letter}-${index}`]
+                                  ? "hidden"
+                                  : ""
+                              }`}
+                            >
+                              <label className="">{letter}</label>
 
-                          <select
-                            name={`estProgram.${stone.id}.${index}`}
-                            className="border rounded py-1 px-2 w-full sm:w-auto sm:min-w-[100px]"
-                            defaultValue={option.program}
-                          >
-                            {options.map((opt) => (
-                              <option key={opt.program} value={opt.program}>
-                                {opt.program}
-                              </option>
-                            ))}
-                          </select>
+                              <select
+                                name={`estProgram.${letter}.${index}`}
+                                className="border rounded py-1 px-2 w-full sm:w-auto sm:min-w-[100px]"
+                                defaultValue={option.program}
+                              >
+                                {options.map((opt) => (
+                                  <option key={opt.program} value={opt.program}>
+                                    {opt.program}
+                                  </option>
+                                ))}
+                              </select>
 
-                          <input
-                            type="number"
-                            step="0.01"
-                            id={`estWeight.${stone.id}.${index}`}
-                            name={`estWeight.${stone.id}.${index}`}
-                            className="border rounded py-1 px-2 w-full sm:w-[100px]"
-                            placeholder="Carats"
-                            maxLength={10} // To ensure that it only allows up to 10 characters
-                          />
+                              <input
+                                type="number"
+                                step="0.01"
+                                id={`estWeight.${letter}.${index}`}
+                                name={`estWeight.${letter}.${index}`}
+                                className="border rounded py-1 px-2 w-full sm:w-[100px]"
+                                placeholder="Carats"
+                                maxLength={10} // To ensure that it only allows up to 10 characters
+                              />
 
-                          <textarea
-                            id={`notes.${stone.id}.${option.program}`}
-                            name={`notes.${stone.id}.${option.program}`}
-                            className="block w-full p-2 border border-gray-300 rounded-md sm:w-auto sm:min-w-[200px]"
-                            rows={1}
-                            placeholder="Notes"
-                          />
+                              <textarea
+                                id={`notes.${letter}.${option.program}`}
+                                name={`notes.${letter}.${option.program}`}
+                                className="block w-full p-1 border border-gray-300 rounded-md sm:w-auto sm:min-w-[200px]"
+                                rows={1}
+                                placeholder="Notes"
+                              />
 
-                          <button
-                            type="button"
-                            
-                            onClick={addStoneProgram}
-                            className="bg-purple-500 text-white px-3 py-2 rounded"
-                          >
-                            +{nextStonePart(stone.id)}
-                          </button>
+                              {letter !== "D" && (
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    unhideStone(nextStonePart(letter), index)
+                                  }
+                                  className="bg-transparent text-red-500 px-3 py-2 rounded"
+                                >
+                                  +{nextStonePart(letter)}
+                                </button>
+                              )}
+                            </div>
+                          ))}
                         </div>
                       ))}
                     </div>
