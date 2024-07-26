@@ -48,20 +48,20 @@ function AddCrystalForm() {
     }
   };
 
-  const addStoneProgram = () => {
-    const lastStoneId = stones[stones.length - 1].id;
-    const newId = nextStonePart(lastStoneId);
-    if (newId <= "D") {
-      setStones([...stones, { id: newId, visible: true }]);
-    } else {
-      toast.error("Only A, B, C, and D stones are allowed.");
-    }
-  };
+  // const addStoneProgram = () => {
+  //   const lastStoneId = stones[stones.length - 1].id;
+  //   const newId = nextStonePart(lastStoneId);
+  //   if (newId <= "D") {
+  //     setStones([...stones, { id: newId, visible: true }]);
+  //   } else {
+  //     toast.error("Only A, B, C, and D stones are allowed.");
+  //   }
+  // };
 
-  const handleAddOrStone = (id) => {
-    const newId = addOrStone(id);
-    setStones([...stones, { id: newId, visible: true }]);
-  };
+  // const handleAddOrStone = (id) => {
+  //   const newId = addOrStone(id);
+  //   setStones([...stones, { id: newId, visible: true }]);
+  // };
 
   const handleAddOrModel = () => {
     nextModel();
@@ -109,14 +109,13 @@ function AddCrystalForm() {
               : formData.get(`estPlusMinusRClarity.${letter}`);
 
           const estColor =
-            formData.get(`estColor.${letter}`) === "" ||
-            !formData.has(!`estColor.${letter}`)
+            formData.get(`estColor.${letter}`) === ""
               ? formData.get("roughColor")
               : formData.get(`estColor.${letter}`);
           const estClarity =
-            formData.get(`estClarity.${letter}`) === "" ||
-            !formData.has(!`estClarity.${letter}`)
-              ? formData.get("roughClarity")
+            formData.get(`estClarity.${letter}`) === ""
+              ? //  ||   !formData.has(!`estClarity.${letter}`)
+                formData.get("roughClarity")
               : formData.get(`estClarity.${letter}`);
 
           if (estWeight) {
@@ -315,14 +314,91 @@ function AddCrystalForm() {
             </div>
 
             <div className="mb-4">
-              {stones.map((stone) => (
-                <div key={stone.id} className="mb-4 bg-blue-50 p-4">
-                  <div className="flex justify-between items-center mb-2">
+              <span className="text-sm text-grey-500">
+                (Can Leave Grades Blank) {"  "}
+              </span>
+              {["A", "B", "C", "D"].map((stone) => (
+                <div>
+                  {/* <h3 className="font-semibold">
+                    Stone {stone}{" "} */}
+                  {/* <button
+                  type="button"
+                  onClick={() => toggleVisibility(stone)}
+                  className="text-sm text-blue-500"
+                >
+                  [{stone.visible ? "Hide" : "Show"} Options]
+                </button> */}
+                  {/* </h3>{" "} */}
+                  <div className="mb-4 flex flex-wrap items-center space-y-4 sm:space-y-0 sm:space-x-4">
+                    <label className="block text-gray-700 font-bold mb-2 sm:mb-0 sm:w-auto w-full">
+                      {stone} Color
+                    </label>
+                    <select
+                      id={`estColor.${stone}`}
+                      name={`estColor.${stone}`}
+                      className="border rounded w-full sm:w-20 py-2 px-3"
+                    >
+                      <option value=""></option>
+                      <option value="D">D</option>
+                      <option value="E">E</option>
+                      <option value="F">F</option>
+                      <option value="G">G</option>
+                      <option value="H">H</option>
+                      <option value="I">I</option>
+                      <option value="J">J</option>
+                      <option value="K">K</option>
+                      <option value="L">L</option>
+                    </select>
+
+                    <select
+                      id={`estPlusMinusRColor.${stone}`}
+                      name={`estPlusMinusRColor.${stone}`}
+                      className="border rounded w-full sm:w-20 py-2 px-3"
+                      placeholder="+-"
+                    >
+                      <option value=""></option>
+                      <option value="+">+</option>
+                      <option value="-">-</option>
+                    </select>
+
+                    <label className="block text-gray-700 font-bold mb-1 sm:mb-0 sm:w-auto w-full">
+                      Clarity
+                    </label>
+                    <select
+                      id={`estClarity.${stone}`}
+                      name={`estClarity.${stone}`}
+                      className="border rounded w-full sm:w-20 py-2 px-3"
+                    >
+                      <option value=""></option>
+                      <option value="IF">IF</option>
+                      <option value="VVS1">VVS1</option>
+                      <option value="VVS2">VVS2</option>
+                      <option value="VS1">VS1</option>
+                      <option value="VS2">VS2</option>
+                      <option value="SI1">SI1</option>
+                      <option value="SI2">SI2</option>
+                      <option value="I1">I1</option>
+                      <option value="I2">I2</option>
+                    </select>
+
+                    <select
+                      id="estPlusMinusRClarity"
+                      name="estPlusMinusRClarity"
+                      className="border rounded w-full sm:w-20 py-2 px-3"
+                      placeholder="+-"
+                    >
+                      <option value=""></option>
+                      <option value="+">+</option>
+                      <option value="-">-</option>
+                    </select>
+                  </div>
+                </div>
+              ))}
+              {/* {["A", "B", "C", "D"].map((stone) => ( */}
+              <div className="mb-4 bg-blue-50 p-4">
+                {/* <div className="flex justify-between items-center mb-2">
                     <h3 className="font-semibold">
-                      Stone {stone.id}{" "}
-                      <span className="text-sm text-grey-500">
-                        (Can Leave Grades Blank) {"  "}
-                      </span>
+                      Stone {stone}{" "}
                       <button
                         type="button"
                         onClick={() => toggleVisibility(stone.id)}
@@ -331,147 +407,82 @@ function AddCrystalForm() {
                         [{stone.visible ? "Hide" : "Show"} Options]
                       </button>
                     </h3>
-                    <button
+                    {/* <button
                       type="button"
                       onClick={() => handleAddOrStone(stone.id)}
                       className="text-sm text-green-500"
                     >
                       OR
-                    </button>
-                  </div>
-                  {stone.visible && (
-                    <div className="space-y-2">
-                      <div className="mb-4 flex flex-wrap items-center space-y-4 sm:space-y-0 sm:space-x-4">
-                        <label className="block text-gray-700 font-bold mb-2 sm:mb-0 sm:w-auto w-full">
-                          Color
-                        </label>
-                        <select
-                          id={`estColor.${stone.id}`}
-                          name={`estColor.${stone.id}`}
-                          className="border rounded w-full sm:w-20 py-2 px-3"
-                        >
-                          <option value=""></option>
-                          <option value="D">D</option>
-                          <option value="E">E</option>
-                          <option value="F">F</option>
-                          <option value="G">G</option>
-                          <option value="H">H</option>
-                          <option value="I">I</option>
-                          <option value="J">J</option>
-                          <option value="K">K</option>
-                          <option value="L">L</option>
-                        </select>
+                    </button> */}
+                {/* </div> */}
 
-                        <select
-                          id={`estPlusMinusRColor.${stone.id}`}
-                          name={`estPlusMinusRColor.${stone.id}`}
-                          className="border rounded w-full sm:w-20 py-2 px-3"
-                          placeholder="+-"
-                        >
-                          <option value=""></option>
-                          <option value="+">+</option>
-                          <option value="-">-</option>
-                        </select>
-
-                        <label className="block text-gray-700 font-bold mb-1 sm:mb-0 sm:w-auto w-full">
-                          Clarity
-                        </label>
-                        <select
-                          id={`estClarity.${stone.id}`}
-                          name={`estClarity.${stone.id}`}
-                          className="border rounded w-full sm:w-20 py-2 px-3"
-                        >
-                          <option value=""></option>
-                          <option value="IF">IF</option>
-                          <option value="VVS1">VVS1</option>
-                          <option value="VVS2">VVS2</option>
-                          <option value="VS1">VS1</option>
-                          <option value="VS2">VS2</option>
-                          <option value="SI1">SI1</option>
-                          <option value="SI2">SI2</option>
-                          <option value="I1">I1</option>
-                          <option value="I2">I2</option>
-                        </select>
-
-                        <select
-                          id="estPlusMinusRClarity"
-                          name="estPlusMinusRClarity"
-                          className="border rounded w-full sm:w-20 py-2 px-3"
-                          placeholder="+-"
-                        >
-                          <option value=""></option>
-                          <option value="+">+</option>
-                          <option value="-">-</option>
-                        </select>
+                <div className="space-y-2">
+                  {options.map((option, index) => (
+                    <div key={index}>
+                      <div className="border-b-2 border-black text-0xl text-center">
+                        <span className="bg-transparent px-5">
+                          {/* # {index + 1} */}
+                        </span>
                       </div>
-                      {options.map((option, index) => (
-                        <div key={index}>
-                          <div className="border-b-2 border-black text-0xl text-center">
-                            <span className="bg-transparent px-5">
-                              {/* # {index + 1} */}
-                            </span>
-                          </div>
-                          {["A", "B", "C", "D"].map((letter) => (
-                            <div
-                              key={`${option.program}-${letter}-${index}`}
-                              className={`flex flex-wrap items-center space-x-2 sm:space-x-4 ${
-                                letter !== "A" &&
-                                !visibleStones[`${letter}-${index}`]
-                                  ? "hidden"
-                                  : ""
-                              }`}
+                      {["A", "B", "C", "D"].map((letter) => (
+                        <div
+                          key={`${option.program}-${letter}-${index}`}
+                          className={`flex flex-wrap items-center space-x-2 sm:space-x-4 ${
+                            letter !== "A" &&
+                            !visibleStones[`${letter}-${index}`]
+                              ? "hidden"
+                              : ""
+                          }`}
+                        >
+                          <label className="">{letter}</label>
+
+                          <select
+                            name={`estProgram.${letter}.${index}`}
+                            className="border rounded py-1 px-2 w-full sm:w-auto sm:min-w-[100px]"
+                            defaultValue={option.program}
+                          >
+                            {options.map((opt) => (
+                              <option key={opt.program} value={opt.program}>
+                                {opt.program}
+                              </option>
+                            ))}
+                          </select>
+
+                          <input
+                            type="number"
+                            step="0.01"
+                            id={`estWeight.${letter}.${index}`}
+                            name={`estWeight.${letter}.${index}`}
+                            className="border rounded py-1 px-2 w-full sm:w-[100px]"
+                            placeholder="Carats"
+                            maxLength={10} // To ensure that it only allows up to 10 characters
+                          />
+
+                          <textarea
+                            id={`notes.${letter}.${option.program}`}
+                            name={`notes.${letter}.${option.program}`}
+                            className="block w-full p-1 border border-gray-300 rounded-md sm:w-auto sm:min-w-[200px]"
+                            rows={1}
+                            placeholder="Notes"
+                          />
+
+                          {letter !== "D" && (
+                            <button
+                              type="button"
+                              onClick={() =>
+                                unhideStone(nextStonePart(letter), index)
+                              }
+                              className="bg-transparent text-red-500 px-3 py-2 rounded"
                             >
-                              <label className="">{letter}</label>
-
-                              <select
-                                name={`estProgram.${letter}.${index}`}
-                                className="border rounded py-1 px-2 w-full sm:w-auto sm:min-w-[100px]"
-                                defaultValue={option.program}
-                              >
-                                {options.map((opt) => (
-                                  <option key={opt.program} value={opt.program}>
-                                    {opt.program}
-                                  </option>
-                                ))}
-                              </select>
-
-                              <input
-                                type="number"
-                                step="0.01"
-                                id={`estWeight.${letter}.${index}`}
-                                name={`estWeight.${letter}.${index}`}
-                                className="border rounded py-1 px-2 w-full sm:w-[100px]"
-                                placeholder="Carats"
-                                maxLength={10} // To ensure that it only allows up to 10 characters
-                              />
-
-                              <textarea
-                                id={`notes.${letter}.${option.program}`}
-                                name={`notes.${letter}.${option.program}`}
-                                className="block w-full p-1 border border-gray-300 rounded-md sm:w-auto sm:min-w-[200px]"
-                                rows={1}
-                                placeholder="Notes"
-                              />
-
-                              {letter !== "D" && (
-                                <button
-                                  type="button"
-                                  onClick={() =>
-                                    unhideStone(nextStonePart(letter), index)
-                                  }
-                                  className="bg-transparent text-red-500 px-3 py-2 rounded"
-                                >
-                                  +{nextStonePart(letter)}
-                                </button>
-                              )}
-                            </div>
-                          ))}
+                              +{nextStonePart(letter)}
+                            </button>
+                          )}
                         </div>
                       ))}
                     </div>
-                  )}
+                  ))}
                 </div>
-              ))}
+              </div>
             </div>
 
             <div className="flex justify-between">
