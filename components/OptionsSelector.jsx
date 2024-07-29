@@ -52,7 +52,7 @@ const OptionCard = ({
 
   const handleSelectClick = async () => {
     try {
-      const selectedOptions = options.map((option) => {
+      const selectedOptions = options.map((option, index) => {
         updateOptionInDatabase(option.id, { selected: true });
 
         return {
@@ -94,7 +94,7 @@ const OptionCard = ({
     >
       <div className="flex justify-between items-center mb-3">
         <h1 className="uppercase text-base tracking-wide text-blue-800 my-2">
-          Option {optionNumber}
+          Option {index}
         </h1>
         {isActive && (
           <button onClick={handleSelectClick}>
@@ -132,9 +132,7 @@ const OptionCard = ({
                 type="number"
                 className="mt-1 p-2 border border-gray-300 rounded w-full"
                 value={inputValues[option.id]}
-                onChange={(e) =>
-                  handleInputChange(option.id, e.target.value)
-                }
+                onChange={(e) => handleInputChange(option.id, e.target.value)}
               />
             </div>
           </div>
@@ -179,27 +177,25 @@ const OptionsSelector = ({ options }) => {
 
   return (
     <div>
-      {Object.entries(groupedOptions).map(
-        ([optionNumber, groupedOptions]) => {
-          const totalEstPrice = groupedOptions.reduce(
-            (acc, option) => acc + option.estPrice,
-            0
-          );
+      {Object.entries(groupedOptions).map(([optionNumber, groupedOptions]) => {
+        const totalEstPrice = groupedOptions.reduce(
+          (acc, option) => acc + option.estPrice,
+          0
+        );
 
-          return (
-            <OptionCard
-              key={optionNumber}
-              optionNumber={optionNumber}
-              options={groupedOptions}
-              totalEstPrice={totalEstPrice}
-              isActive={activeOptionNumber === optionNumber}
-              onClick={() => setActiveOptionNumber(optionNumber)}
-              onInputChange={handleInputChange}
-              updateOptionInDatabase={updateOptionInDatabase}
-            />
-          );
-        }
-      )}
+        return (
+          <OptionCard
+            key={optionNumber}
+            optionNumber={optionNumber}
+            options={groupedOptions}
+            totalEstPrice={totalEstPrice}
+            isActive={activeOptionNumber === optionNumber}
+            onClick={() => setActiveOptionNumber(optionNumber)}
+            onInputChange={handleInputChange}
+            updateOptionInDatabase={updateOptionInDatabase}
+          />
+        );
+      })}
     </div>
   );
 };
