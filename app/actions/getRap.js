@@ -1,88 +1,65 @@
 "use server";
-import axios from "axios";
+import { db } from "@/lib/db";
 import { auth } from "@clerk/nextjs/server";
 
-// async function fetchLoginToken() {
-//   const client_id = process.env.RAPKEY;
-//   const client_secret = process.env.RAPSECRET;
-//   const tokenUrl = "https://authztoken.api.rapaport.com/api/get";
+function findRapSize(carats) {
+  const ranges = [
+    { min: 0.18, max: 0.22, rapSize: 0.18 },
+    { min: 0.23, max: 0.29, rapSize: 0.23 },
+    { min: 0.3, max: 0.39, rapSize: 0.3 },
+    { min: 0.4, max: 0.49, rapSize: 0.4 },
+    { min: 0.5, max: 0.69, rapSize: 0.5 },
+    { min: 0.7, max: 0.89, rapSize: 0.7 },
+    { min: 0.9, max: 0.99, rapSize: 0.9 },
+    { min: 1, max: 1.49, rapSize: 1 },
+    { min: 1.5, max: 1.99, rapSize: 1.5 },
+    { min: 2, max: 2.99, rapSize: 2 },
+    { min: 3, max: 3.99, rapSize: 3 },
+    { min: 4, max: 4.99, rapSize: 4 },
+    { min: 5, max: 9.99, rapSize: 5 },
+    { min: 10, max: 30, rapSize: 10 },
+  ];
 
-//   try {
-//     const { userId } = auth();
-
-//     // Ensure the user is authenticated via Clerk
-//     if (!userId) {
-//       throw new Error("Not authenticated");
-//     }
-
-//     const response = await axios.post(tokenUrl, {
-//       client_id,
-//       client_secret,
-//     });
-
-//     return response.data.access_token; // Assuming the response includes a token field
-//   } catch (error) {
-//     console.error('Error fetching login token:', error);
-//     throw error; // Rethrow the error for further handling or logging
-//   }
-// }
-
-async function fetchLoginToken() {
-  const client_id = process.env.RAPKEY;
-  const client_secret = process.env.RAPSECRET;
-  const tokenUrl = "https://authztoken.api.rapaport.com/api/get";
-
-  try {
-    const response = await axios.post(tokenUrl, {
-      client_id,
-      client_secret,
-    });
-
-    return response.data.access_token; // Assuming the response includes a token field
-  } catch (error) {
-    if (error.response) {
-      // The request was made and the server responded with a status code
-      console.error("Server responded with an error:", error.response.status);
-      console.error("Response data:", error.response.data);
-    } else if (error.request) {
-      // The request was made but no response was received
-      console.error("No response received from server:", error.request);
-    } else {
-      // Something happened in setting up the request that triggered an error
-      console.error("Error setting up the request:", error.message);
+  for (const range of ranges) {
+    if (carats >= range.min && carats <= range.max) {
+      return range.rapSize;
     }
-    throw error; // Rethrow the error for further handling or logging
   }
+
+  return null; 
 }
 
 async function getRap(shape, size, color, clarity) {
   try {
-    const token = await fetchLoginToken(); // Get access token
-    if (
-      shape.toUpperCase() === "RB" ||
-      shape.toUpperCase() === "ROUND" ||
-      shape.toUpperCase() === "BR" ||
-      shape.toUpperCase() === "ROUND BRILLIANT"
-    ) {
-      shape = "Round";
-    } else {
-      shape = "Pear";
+    const { userId } = auth();
+
+    if (!userId) {
+      return { error: "User not found" };
     }
 
-    const url = "https://technet.rapnetapis.com/pricelist/api/Prices";
-    const response = await axios.get(url, {
-      params: { shape, size, color, clarity },
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        Authorization: `Bearer ${token}`,
-      },
+    shape = shape.toUpperCase();
+    let db
+    if (shape === "RB" || shape === "BR") {
+      shape = "RB";
+      dbShape = "RBRap";
+    } else {
+      shape = "PS";
+      dbShape = "PSRap";
+    }
+
+    const shape_color_clarity_size = `${shape}-${color}-${clarity}-${findRapSize(size)}`;
+    console.log(shape_color_clarity_size);
+    const list = await db[dbShape].findUnique({
+      where: { shape_color_clarity_size },
     });
 
-    // Assuming response.data contains an array or object with 'caratprice' field
-    const caratprice = response.data.caratprice;
+    if (!list) {
+      return { error: "Data not found" };
+    }
+
+    const caratprice = list.list;
     const listPrice = {
-      caratprice: caratprice,
+      caratprice,
       totalListPrice: caratprice * size,
     };
 

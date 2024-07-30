@@ -94,7 +94,7 @@ const OptionCard = ({
         )}
       </div>
 
-      <div className="mb-1 font-semibold text-blue-800">
+      <div className="mb-4 font-semibold text-blue-800">
         <span className="text-xl mr-2">Total Price:</span>
         <span className="text-2xl">$</span>
         <span className="text-2xl font-semibold text-blue-800">
@@ -108,21 +108,31 @@ const OptionCard = ({
             <div className="bg-gray-100 p-4 rounded-lg shadow-sm">
               <h2 className="text-blue-800">
                 <div class="w-7 h-7 font-semibold text-white rounded-full flex justify-center bg-blue-800 items-center">
-                  <p>{option.ABC}</p>
+                  <p>{option.ABC}</p> 
                 </div>
                 {/* <span className="font-semibold">{option.ABC} </span> */}
-                {option.estProgram}
+                {/* {option.estProgram} */}
+                
               </h2>
               <p>
+              {option.estProgram} {" "}
                 <span className="text-blue-800">{option.estWeight} Cts {option.estColor} {option.plusMinusRColor} {option.estClarity} {option.plusMinusRClarity}</span>
-              </p>
-              <p>
                 <span className="text-blue-800">
                   -{option.estDiscount}% ${formatNumberCommas(option.estPrice)}
                 </span>
                 <span className="text-blue-800">
                   {option.notes}
                 </span>
+
+                
+              </p>
+              <p>
+                {/* <span className="text-blue-800">
+                  -{option.estDiscount}% ${formatNumberCommas(option.estPrice)}
+                </span>
+                <span className="text-blue-800">
+                  {option.notes}
+                </span> */}
               </p>
               <form onSubmit={(e) => handleFormSubmit(option.id, e)}>
             <input

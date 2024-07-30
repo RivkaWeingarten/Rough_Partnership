@@ -110,9 +110,16 @@ model Diamond {
 
 }
 
-model Rap {
+model RBRap {
   id Int @id @default(autoincrement())
-  shape_color_clarity_size String 
+  shape_color_clarity_size String @unique
+  list Float
+  listDate DateTime
+
+}
+model PSRap {
+  id Int @id @default(autoincrement())
+  shape_color_clarity_size String @unique
   list Float
   listDate DateTime
 

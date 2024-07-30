@@ -17,7 +17,7 @@ const __dirname = path.dirname(__filename);
 import { db } from '../../lib/db.js'; // Adjust the relative path if necessary
 
 const importRapCsv = async () => {
-  const csvFilePath = path.join(__dirname, '..', '..', 'rapImport.csv'); // Adjust path if necessary
+  const csvFilePath = path.join(__dirname, '..', '..', 'psRapList.csv'); // Adjust path if necessary
   const records = [];
 
   fs.createReadStream(csvFilePath)
@@ -31,7 +31,7 @@ const importRapCsv = async () => {
       // Insert records into the database
       for (const record of records) {
         try {
-          await db.Rap.create({
+          await db.PSRap.create({
             data: {
               shape_color_clarity_size: record['Shape-Color-Clarity'],
               list: parseFloat(record['List']),

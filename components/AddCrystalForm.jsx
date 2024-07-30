@@ -1,11 +1,13 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
+
 import options from "@/roughOptionsPrograms.json";
 import { toast } from "react-toastify";
 import addCrystal from "@/app/actions/addCrystal";
 import getRap from "@/app/actions/getRap";
 
 function AddCrystalForm() {
+  const formRef = useRef(null);
   const [stones, setStones] = useState([{ id: "A", visible: true }]);
   const [currentModel, setCurrentModel] = useState(1);
 
@@ -130,13 +132,13 @@ function AddCrystalForm() {
                 `shape is ${estShape} program is ${estProgram} est weight is ${estWeight}
                   est color is ${estColor} est clarity is ${estClarity} `
               );
-              const list = await getRap(
+              const listPrice = await getRap(
                 estShape,
                 estWeight,
                 estColor,
                 estClarity
               );
-              console.log(list);
+              console.log(listPrice);
               return {
                 ABC: letter,
                 optionNumber: index + 1,
@@ -146,7 +148,7 @@ function AddCrystalForm() {
                 estColor,
                 estClarity,
                 notes,
-                list,
+                listPrice,
                 estPlusMinusRColor,
                 estPlusMinusRClarity,
               };
@@ -171,6 +173,7 @@ function AddCrystalForm() {
       toast.error(error);
     } else {
       toast.success(`Added resource number: ${data.resourceNumber}`);
+      formRef.current?.reset();
     }
   };
 
@@ -178,7 +181,7 @@ function AddCrystalForm() {
     <section className="bg-blue-50">
       <div className="container m-auto max-w-2xl py-24">
         <div className="bg-white px-6 py-8 mb-4 shadow-md rounded-md border m-4 md:m-0">
-          <form onSubmit={addAction}>
+        <form ref={formRef} onSubmit={addAction}>
             <h2 className="text-3xl text-center font-semibold mb-6">
               Add Rough Diamond
             </h2>
