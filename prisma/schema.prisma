@@ -110,3 +110,10 @@ model Diamond {
 
 }
 
+model Rap {
+  id Int @id @default(autoincrement())
+  shape_color_clarity_size String 
+  list Float
+  listDate DateTime
+
+}
