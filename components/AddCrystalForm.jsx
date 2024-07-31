@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 import addCrystal from "@/app/actions/addCrystal";
 import getRap from "@/app/actions/getRap";
 
-function AddCrystalForm() {
+function AddCrystalForm({lotName}) {
   const formRef = useRef(null);
   const [stones, setStones] = useState([{ id: "A", visible: true }]);
   const [currentModel, setCurrentModel] = useState(1);
@@ -168,7 +168,7 @@ function AddCrystalForm() {
 
     formData.append("optionsData", JSON.stringify(optionsData));
 
-    const { data, error } = await addCrystal(formData);
+    const { data, error } = await addCrystal(formData, lotName);
     if (error) {
       toast.error(error);
     } else {
@@ -183,7 +183,7 @@ function AddCrystalForm() {
         <div className="bg-white px-6 py-8 mb-4 shadow-md rounded-md border m-4 md:m-0">
         <form ref={formRef} onSubmit={addAction}>
             <h2 className="text-3xl text-center font-semibold mb-6">
-              Add Rough Diamond
+              Add Rough to Lot # {lotName}
             </h2>
             <div className="mb-4 flex flex-wrap items-center space-y-4 sm:space-y-0 sm:space-x-4">
               <label className="block text-gray-700 font-bold mb-2 sm:mb-0 sm:w-auto w-full">
@@ -194,7 +194,7 @@ function AddCrystalForm() {
                 id="resourceNumber"
                 name="resourceNumber"
                 className="border rounded w-full sm:w-24 py-2 px-3"
-                placeholder="240-1"
+                placeholder={`${lotName}-enter only number`}
                 required
               />
               <label className="block text-gray-700 font-bold mb-2 sm:mb-0 sm:w-auto w-full">

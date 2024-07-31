@@ -5,6 +5,7 @@ export default function InfoBox({
   backgroundColor = "bg-gray-100",
   textColor = "text-gray-800",
   buttonInfo,
+  buttonInfo2,
   children,
   lot,
 }) {
@@ -17,6 +18,12 @@ export default function InfoBox({
         className={`inline-block ${buttonInfo.backgroundColor} text-white rounded-lg px-4 py-2 hover:opacity-80`}
       >
         {buttonInfo.text || "View Details"}
+      </a>
+      <a
+        href={buttonInfo2.link}
+        className={`inline-block ${buttonInfo2.backgroundColor} text-white rounded-lg px-4 py-2 hover:opacity-80`}
+      >
+        {buttonInfo.text || "Add Rough"}
       </a>
     </div>
   );

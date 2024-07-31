@@ -25,8 +25,13 @@ async function InfoBoxes() {
                   backgroundColor="bg-gray-100"
                   buttonInfo={{
                   
-                    link: `/crystals/${lot.lotName}`,
+                    link: `/lots/${lot.lotName}`,
                     backgroundColor: "bg-black",
+                  }}
+                                    lot={lot}buttonInfo2={{
+                  
+                    link: `/lots/${lot.lotName}/add-crystal`,
+                    backgroundColor: "bg-green-400",
                   }}
                 >
                Value: {formatNumberCommas(lot.totalPrice)} {""}

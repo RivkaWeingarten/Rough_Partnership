@@ -3,8 +3,8 @@ import { auth } from "@clerk/nextjs/server";
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 
-async function addCrystal(formData) {
-  const resourceNumberValue = formData.get("resourceNumber");
+async function addCrystal(formData, lotName ) {
+  const resourceNumberValue = lotName + '-' + formData.get("resourceNumber");
   const roughWeightValue = formData.get("roughWeight");
   const roughColorValue = formData.get("roughColor");
   const roughClarityValue = formData.get("roughClarity");
@@ -64,7 +64,7 @@ async function addCrystal(formData) {
         fluor,
         roughDescription: description,
         userId,
-        lotNumber: "test",
+        lotNumber: lotName,
       },
     });
 

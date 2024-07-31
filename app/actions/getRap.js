@@ -38,7 +38,7 @@ async function getRap(shape, size, color, clarity) {
     }
 
     shape = shape.toUpperCase();
-    let db
+    let dbShape
     if (shape === "RB" || shape === "BR") {
       shape = "RB";
       dbShape = "RBRap";

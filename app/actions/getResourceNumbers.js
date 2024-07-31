@@ -1,8 +1,9 @@
+
 "use server";
 import { db } from "@/lib/db";
 import { auth } from "@clerk/nextjs/server";
 
-async function getResourceNumbers() {
+async function getResourceNumbers(lotId) {
   const { userId } = auth();
 
   if (!userId) {
@@ -10,19 +11,37 @@ async function getResourceNumbers() {
   }
 
   try {
-    const resourceNumbers = await db.rough.findMany({
-      // where: { userId }, // Uncomment this if you want to filter by userId
-      orderBy: {
-        createdAt: "desc",
-      },
+    const lot = await db.lot.findUnique({
+      where: { lotName: lotId },
       include: {
-        options: true,
-        diamonds:true,
+        rough: {
+          include: {
+            diamonds: true,
+            options: true,
+          },
+        },
       },
+    });
+
+    if (!lot) {
+      return { error: "Lot not found" };
+    }
+
+    // Aggregate data as needed
+    const resourceNumbers = lot.rough.map(roughItem => {
+      const totalDiamonds = roughItem.diamonds.length;
+      const totalOptions = roughItem.options.length;
+
+      return {
+        ...roughItem,
+        totalDiamonds,
+        totalOptions,
+      };
     });
 
     return { resourceNumbers };
   } catch (error) {
+    console.error("Database error:", error);
     return { error: "Database error" };
   }
 }
