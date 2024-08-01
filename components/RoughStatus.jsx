@@ -1,7 +1,7 @@
 
 import classNames from "classnames";
-export default function RoughStatus({ options }) {
-    const { background, statusText } = statusColor(options);
+export default function RoughStatus({ options, diamonds }) {
+    const { background, statusText } = statusColor(options, diamonds);
   
     return (
         <h3
@@ -19,22 +19,26 @@ export default function RoughStatus({ options }) {
     );
   }
   
-  function statusColor(options) {
+  function statusColor(options, diamonds) {
     let background = '';
     let statusText = '';
   
     if (options.length === 0) {
+      // Case: No options available
       background = 'white';
       statusText = 'No options yet';
     } else if (options.some(option => option.selected)) {
-      const selectedOption = options.find(option => option.selected);
+      // Case: At least one option is selected
+      
       background = 'green-100';
-      statusText = `${selectedOption.estProgram} @ ${selectedOption.estWeight}`
+      statusText = Array.isArray(diamonds) && diamonds.length > 0
+        ? diamonds.map(diamond => `${diamond.estimatedProgram} @ ${diamond.estimatedWeight}`).join(', ')
+        : 'No diamonds available';
     } else {
+      // Case: No options are selected
       background = 'yellow-200';
       statusText = 'Please select';
     }
   
     return { background, statusText };
   }
-  

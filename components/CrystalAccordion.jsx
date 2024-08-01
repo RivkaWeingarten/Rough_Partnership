@@ -35,15 +35,16 @@ const CrystalAccordion = ({ resourceNumber }) => {
              {resourceNumber.roughDescription}
               </span>
               <span className="inline md:hidden text-black-500"> 💎</span>
-            <RoughStatus options={resourceNumber.options} />
+          
+            <RoughStatus options={resourceNumber.options} diamonds={resourceNumber.diamonds} />
             <span className="text-xl md:self-center">{isOpen ? "−" : "+"}</span>
           </div>
     
         </button>
         {isOpen && (
-          <div className="p-4 bg-white w-full">
+          <div className="p-4 bg-blue-100 w-full">
             {resourceNumber.options.length === 0 ? (
-              <h3 className="text-lg font-bold mb-2">
+              <h3 className="text-lg font-bold mb-2 ">
                 No options for {resourceNumber.resourceNumber}
               </h3>
             ) : (

@@ -15,6 +15,7 @@ async function getResourceNumbers(lotId) {
       where: { lotName: lotId },
       include: {
         rough: {
+          orderBy: {updatedAt: 'desc'},
           include: {
             diamonds: true,
             options: true,
