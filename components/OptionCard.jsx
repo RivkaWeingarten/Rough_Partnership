@@ -86,14 +86,14 @@ const OptionCard = ({
     <>
   
     <div
- className={`w-full lg:w-1/3 px-2 mb-4 bg-white rounded-lg shadow-md p-4 cursor-pointer hover:bg-green-100 focus:outline-none focus:shadow-outline-green ${
+ className={` w-full p-4 lg:w-1/3 m-0.25  mb-4 bg-white rounded-lg shadow-md cursor-pointer hover:bg-green-100 focus:outline-none focus:shadow-outline-green ${
   isActive ? "bg-green-100 shadow-outline-green" : ""
 }`}
   tabIndex="0"
   onClick={onClick}
   onKeyDown={(e) => e.key === " " && onClick()}
 >
-  <div className="flex justify-between items-center mb-2">
+  <div className=" flex justify-between items-center mb-2 ">
     <h1 className="uppercase text-sm tracking-wide text-blue-800">
       Option {optionNumber}
     </h1>
@@ -141,12 +141,13 @@ const OptionCard = ({
             />
           </form>
                 </td>
+                <td className="p-1">{option.estDiscount}%</td>
                 <td className="p-1">${formatNumberCommas(option.estPrice)}</td>
                 <td className="p-1">{option.notes}</td>
               </tr>
             ))}
             <tr className="font-semibold">
-              <td className="p-1" colSpan="6">Total:</td>
+              <td className="p-1" colSpan="7">Total:</td>
               <td className="p-1">${formatNumberCommas(totalEstPrice)}</td>
               <td className="p-1"></td>
             </tr>

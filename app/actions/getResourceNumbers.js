@@ -18,7 +18,9 @@ async function getResourceNumbers(lotId) {
           orderBy: {updatedAt: 'desc'},
           include: {
             diamonds: true,
-            options: true,
+            options:{
+            orderBy: {ABC: 'asc'},
+            }
           },
         },
       },
