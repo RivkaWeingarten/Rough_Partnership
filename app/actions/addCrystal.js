@@ -33,6 +33,7 @@ async function addCrystal(formData, lotName ) {
   const machineClarity = ""
   const fluor = fluorValue.toString();
   const description = descriptionValue ? descriptionValue.toString() : "";
+  
 
   const { userId } = auth();
 
@@ -79,6 +80,8 @@ async function addCrystal(formData, lotName ) {
       estShape: option.estShape,
       estColor: option.estColor,
       estClarity: option.estClarity,
+      company: option.company,
+      isPublic: option.isPublic,
       estFluor: fluor,
       plusMinusRColor: option.estPlusMinusRColor,
       plusMinusRClarity: option.estPlusMinusRClarity,

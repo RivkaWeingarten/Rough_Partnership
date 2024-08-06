@@ -128,6 +128,8 @@ function AddCrystalForm({lotName}) {
               );
               const estShape = program ? program.estShape : null;
               const estProgram = program ? program.program : null;
+              const company = program ? program.company : null;
+              const isPublic = company==="KW" ? program.isPublic : false;
               console.log(
                 `shape is ${estShape} program is ${estProgram} est weight is ${estWeight}
                   est color is ${estColor} est clarity is ${estClarity} `
@@ -138,7 +140,7 @@ function AddCrystalForm({lotName}) {
                 estColor,
                 estClarity
               );
-              console.log(listPrice);
+   
               return {
                 ABC: letter,
                 optionNumber: index + 1,
@@ -151,6 +153,8 @@ function AddCrystalForm({lotName}) {
                 listPrice,
                 estPlusMinusRColor,
                 estPlusMinusRClarity,
+                company,
+                isPublic
               };
             } catch (error) {
               console.error("Error fetching price data:", error);

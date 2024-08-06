@@ -59,6 +59,7 @@ const OptionCard = ({
           actTotalList: parseFloat(option.totalEstList),
           estimatedProgram: option.estProgram,
           resourceNumber: option.resourceNumber,
+          company: option.company,
           location: "WDM BOTSWANA",
           isPolished: false,
           inventory: "NA",
