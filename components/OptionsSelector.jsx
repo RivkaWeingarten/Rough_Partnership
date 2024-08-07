@@ -4,7 +4,11 @@ import { useState, useEffect } from "react";
 import { totalPriceWithDiscount, formatNumberCommas } from "@/lib/utils";
 import changeOptionData from "@/app/actions/updateOption";
 import OptionCard from "@/components/OptionCard";
-import {checkResourceNumberExists, addDiamondRecord,updateDiamondRecord} from "@/app/actions/addDiamond";
+import {
+  checkResourceNumberExists,
+  addDiamondRecord,
+  updateDiamondRecord,
+} from "@/app/actions/addDiamond";
 import { toast } from "react-toastify";
 
 const updateOptionInDatabase = async (optionId, updateData) => {
@@ -27,9 +31,6 @@ const updateOptionInDatabase = async (optionId, updateData) => {
   }
 };
 
-
-;
-
 const OptionsSelector = ({ options }) => {
   const [activeOptionNumber, setActiveOptionNumber] = useState(null);
   const [allOptions, setAllOptions] = useState(options);
@@ -42,15 +43,15 @@ const OptionsSelector = ({ options }) => {
     acc[optionNumber].push(option);
     return acc;
   }, {});
-'reset all options to false'
-const resetAllOptions = () => {
-  const resetOptions = allOptions.map((option) => {
-    updateOptionInDatabase(option.id, { selected: false }); // Update database
-    return { ...option, selected: false }; // Reset state
-  });
+  ("reset all options to false");
+  const resetAllOptions = () => {
+    const resetOptions = allOptions.map((option) => {
+      updateOptionInDatabase(option.id, { selected: false }); // Update database
+      return { ...option, selected: false }; // Reset state
+    });
 
-  setAllOptions(resetOptions); // Update state
-};
+    setAllOptions(resetOptions); // Update state
+  };
   const handleInputChange = (optionId, newDiscount) => {
     const updatedOptions = allOptions.map((option) => {
       if (option.id === optionId) {
@@ -101,7 +102,6 @@ const resetAllOptions = () => {
           );
 
           return (
-        
             <OptionCard
               key={optionNumber}
               optionNumber={index + 1}
@@ -114,7 +114,7 @@ const resetAllOptions = () => {
               updateOptionInDatabase={updateOptionInDatabase}
               resetAllOptions={resetAllOptions}
             />
-              );
+          );
         }
       )}
     </div>

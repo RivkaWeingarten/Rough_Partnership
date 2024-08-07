@@ -1,8 +1,11 @@
 import React, { useState } from "react";
 import { toast } from "react-toastify";
-import {checkResourceNumberExists, addDiamondRecord,updateDiamondRecord} from "@/app/actions/addDiamond";
+import {
+  checkResourceNumberExists,
+  addDiamondRecord,
+  updateDiamondRecord,
+} from "@/app/actions/addDiamond";
 import { formatNumberCommas } from "@/lib/utils";
-
 
 const OptionCard = ({
   optionNumber,
@@ -13,18 +16,14 @@ const OptionCard = ({
   onClick,
   onInputChange,
   updateOptionInDatabase,
-  resetAllOptions
-
+  resetAllOptions,
 }) => {
-
   const [inputValues, setInputValues] = useState(
     options.reduce((acc, option) => {
       acc[option.id] = option.estDiscount;
       return acc;
     }, {})
   );
-
-
 
   const handleInputChange = (optionId, value) => {
     setInputValues({
@@ -68,7 +67,7 @@ const OptionCard = ({
         };
       });
 
-    //  Step 3: Update Diamonds table
+      //  Step 3: Update Diamonds table
       for (const option of selectedOptions) {
         const exists = await checkResourceNumberExists(option.resourceNumber); // Assume this function is defined
         if (exists) {
@@ -85,81 +84,97 @@ const OptionCard = ({
   };
   return (
     <>
-  
-    <div
- className={` w-full p-4 lg:w-1/3 m-0.25  mb-4 bg-white rounded-lg shadow-md cursor-pointer hover:bg-green-100 focus:outline-none focus:shadow-outline-green ${
-  isActive ? "bg-green-100 shadow-outline-green" : ""
-}`}
-  tabIndex="0"
-  onClick={onClick}
-  onKeyDown={(e) => e.key === " " && onClick()}
->
-  <div className=" flex justify-between items-center mb-2 ">
-    <h1 className="uppercase text-sm tracking-wide text-blue-800">
-      Option {optionNumber}
-    </h1>
-    {isMostValued && (
-      <span className="text-green-500 text-sm font-bold">$ BEST VALUE</span>
-    )}
-    {isActive && (
-      <button onClick={handleSelectClick}>
-        <div className="bg-green-400 p-2 rounded-sm shadow-sm inline-block text-white rounded-lg px-2 py-1 hover:opacity-80">
-          Select
+      <div
+        className={` w-full p-4 lg:w-1/3 m-0.25  mb-4 bg-white rounded-lg shadow-md cursor-pointer hover:bg-green-100 focus:outline-none focus:shadow-outline-green ${
+          isActive ? "bg-green-100 shadow-outline-green" : ""
+        }`}
+        tabIndex="0"
+        onClick={onClick}
+        onKeyDown={(e) => e.key === " " && onClick()}
+      >
+        <div className=" flex justify-between items-center mb-2 ">
+          <h1 className="uppercase text-sm tracking-wide text-blue-800">
+            Option {optionNumber}
+          </h1>
+          {isMostValued && (
+            <span className="text-green-500 text-sm font-bold">
+              $ BEST VALUE
+            </span>
+          )}
+          {isActive && (
+            <button onClick={handleSelectClick}>
+              <div className="bg-green-400 p-2 rounded-sm shadow-sm inline-block text-white rounded-lg px-2 py-1 hover:opacity-80">
+                Select
+              </div>
+            </button>
+          )}
         </div>
-      </button>
-    )}
-  </div>
 
-  <div className="mb-2 font-semibold text-blue-800 text-sm">
-    <span className="text-sm mr-1">Total Price:</span>
-    <span className="text-lg">$</span>
-    <span className="text-lg font-semibold text-blue-800">
-      {formatNumberCommas(totalEstPrice)}
-    </span>
-  </div>
+        <div className="mb-2 font-semibold text-blue-800 text-sm">
+          <span className="text-sm mr-1">Total Price:</span>
+          <span className="text-lg">$</span>
+          <span className="text-lg font-semibold text-blue-800">
+            {formatNumberCommas(totalEstPrice)}
+          </span>
+        </div>
 
-  <div className="flex flex-wrap">
-    <div className="w-full p-1">
-      <div className="bg-gray-100 p-2 rounded-lg shadow-sm text-xs">
-        <table className="w-full text-left">
-          <tbody>
-            {options.map((option) => (
-              <tr key={option.id}>
-                <td className="p-1 font-bold">{option.ABC}</td>
-                <td className="p-1">{option.estColor} {option.plusMinusRColor}</td>
-                <td className="p-1">{option.estClarity} {option.plusMinusRClarity}</td>
-                <td className="p-1 font-bold">{option.estProgram} @ {option.estWeight}</td>
-                
-                <td className="p-1">{option.estNotes}</td>
-                <td className="p-1">
-                 
-                <form onSubmit={(e) => handleFormSubmit(option.id, e)}>
-            <input
-              type="number"
-              className="mt-1 p-2 border border-gray-300 rounded w-1/3"
-              value={inputValues[option.id]}
-              onChange={(e) => setInputValues({ ...inputValues, [option.id]: e.target.value })}
-            />
-          </form>
-                </td>
-                <td className="p-1">{option.estDiscount}%</td>
-                <td className="p-1">${formatNumberCommas(option.estPrice)}</td>
-                <td className="p-1">{option.notes}</td>
-              </tr>
-            ))}
-            <tr className="font-semibold">
-              <td className="p-1" colSpan="7">Total:</td>
-              <td className="p-1">${formatNumberCommas(totalEstPrice)}</td>
-              <td className="p-1"></td>
-            </tr>
-          </tbody>
-        </table>
+        <div className="flex flex-wrap">
+          <div className="w-full p-1">
+            <div className="bg-gray-100 p-2 rounded-lg shadow-sm text-xs">
+              <table className="w-full text-left">
+                <tbody>
+                  {options.map((option) => (
+                    <tr key={option.id}>
+                      <td className="p-1 font-bold">{option.ABC}</td>
+                      <td className="p-1">
+                        {option.estColor} {option.plusMinusRColor}
+                      </td>
+                      <td className="p-1">
+                        {option.estClarity} {option.plusMinusRClarity}
+                      </td>
+                      <td className="p-1 font-bold">
+                        {option.estProgram} @ {option.estWeight}
+                      </td>
+
+                      <td className="p-1">{option.estNotes}</td>
+                      <td className="p-1">
+                        <form onSubmit={(e) => handleFormSubmit(option.id, e)}>
+                          <input
+                            type="number"
+                            className="mt-1 p-2 border border-gray-300 rounded w-1/3"
+                            value={inputValues[option.id]}
+                            onChange={(e) =>
+                              setInputValues({
+                                ...inputValues,
+                                [option.id]: e.target.value,
+                              })
+                            }
+                          />
+                        </form>
+                      </td>
+                      <td className="p-1">{option.estDiscount}%</td>
+                      <td className="p-1">
+                        ${formatNumberCommas(option.estPrice)}
+                      </td>
+                      <td className="p-1">{option.notes}</td>
+                    </tr>
+                  ))}
+                  <tr className="font-semibold">
+                    <td className="p-1" colSpan="7">
+                      Total:
+                    </td>
+                    <td className="p-1">
+                      ${formatNumberCommas(totalEstPrice)}
+                    </td>
+                    <td className="p-1"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
-</div>
-
-   </>
+    </>
   );
 };
 
