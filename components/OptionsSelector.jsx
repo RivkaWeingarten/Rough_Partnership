@@ -4,7 +4,8 @@ import { useState, useEffect } from "react";
 import { totalPriceWithDiscount, formatNumberCommas } from "@/lib/utils";
 import changeOptionData from "@/app/actions/updateOption";
 import OptionCard from "@/components/OptionCard";
-import {checkResourceNumberExists, addDiamondRecord,updateDiamondRecord} from "@/app/actions/addDiamond";
+
+
 import { toast } from "react-toastify";
 
 const updateOptionInDatabase = async (optionId, updateData) => {
@@ -20,17 +21,15 @@ const updateOptionInDatabase = async (optionId, updateData) => {
     };
 
     const updatedOption = await changeOptionData(optionId, parsedData);
-    toast.success(`Option updated successfully`);
+    // toast.success(`Option updated successfully`);
     return updatedOption;
   } catch (error) {
     toast.error(`Error updating option: ${error.message}`);
   }
 };
 
-
-;
-
 const OptionsSelector = ({ options }) => {
+  
   const [activeOptionNumber, setActiveOptionNumber] = useState(null);
   const [allOptions, setAllOptions] = useState(options);
 
@@ -42,15 +41,15 @@ const OptionsSelector = ({ options }) => {
     acc[optionNumber].push(option);
     return acc;
   }, {});
-'reset all options to false'
-const resetAllOptions = () => {
-  const resetOptions = allOptions.map((option) => {
-    updateOptionInDatabase(option.id, { selected: false }); // Update database
-    return { ...option, selected: false }; // Reset state
-  });
+  ("reset all options to false");
+  const resetAllOptions = () => {
+    const resetOptions = allOptions.map((option) => {
+      updateOptionInDatabase(option.id, { selected: false }); // Update database
+      return { ...option, selected: false }; // Reset state
+    });
 
-  setAllOptions(resetOptions); // Update state
-};
+    setAllOptions(resetOptions); // Update state
+  };
   const handleInputChange = (optionId, newDiscount) => {
     const updatedOptions = allOptions.map((option) => {
       if (option.id === optionId) {
@@ -70,7 +69,7 @@ const resetAllOptions = () => {
 
     setAllOptions(updatedOptions);
   };
-
+//calculate the most valued option
   const calculateMostValuedOption = () => {
     let mostValuedOptionNumber = null;
     let highestValue = 0;
@@ -90,6 +89,42 @@ const resetAllOptions = () => {
   };
 
   const mostValuedOptionNumber = calculateMostValuedOption();
+//check if a option is selected
+  const isOptionNumberSelected = () => {
+    let selectedOptionNumber = null;
+
+    Object.entries(groupedOptions).forEach(([optionNumber, options]) => {
+      if (options.every((option) => option.selected)) {
+        selectedOptionNumber = optionNumber;
+      }
+    });
+
+    return selectedOptionNumber;
+  };
+
+  const isOptionGroupSelected = isOptionNumberSelected();
+//check if A option is public
+  
+const isOptionNumberPublic = () => {
+  const publicOptionNumbers = new Set();
+
+  // Iterate over each option group to determine if it's public
+  Object.entries(groupedOptions).forEach(([optionNumber, options]) => {
+    const isGroupPublic = options.some(option => option.ABC === "A" && option.isPublic);
+    
+    if (isGroupPublic) {
+      publicOptionNumbers.add(optionNumber);
+    }
+  });
+
+  return publicOptionNumbers;
+};
+
+const isOptionGroupPublic = isOptionNumberPublic();
+
+
+
+
 
   return (
     <div className="flex flex-wrap -mx-2">
@@ -101,7 +136,6 @@ const resetAllOptions = () => {
           );
 
           return (
-        
             <OptionCard
               key={optionNumber}
               optionNumber={index + 1}
@@ -109,12 +143,14 @@ const resetAllOptions = () => {
               totalEstPrice={totalEstPrice}
               isActive={activeOptionNumber === optionNumber}
               isMostValued={optionNumber === mostValuedOptionNumber}
+              isSelected={optionNumber === isOptionGroupSelected}
+              isPublic={isOptionGroupPublic.has(optionNumber)}
               onClick={() => setActiveOptionNumber(optionNumber)}
               onInputChange={handleInputChange}
               updateOptionInDatabase={updateOptionInDatabase}
               resetAllOptions={resetAllOptions}
             />
-              );
+          );
         }
       )}
     </div>

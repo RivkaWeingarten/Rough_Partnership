@@ -226,7 +226,7 @@ export default async function Navbar() {
           <div className="flex items-center space-x-4">
           
             <SignedIn>
-              <span className="text-white">Welcome, {user?.name || "User"}</span>
+              <span className="text-white">Welcome, {user?.name || "User"} {user?.company}</span>
               <SignOutButton>
                 <button className="text-white bg-gray-700 hover:bg-gray-900 hover:text-white rounded-md px-3 py-2">
                   Logout
