@@ -7,7 +7,6 @@ import {
 } from "@/app/actions/addDiamond";
 import { formatNumberCommas } from "@/lib/utils";
 
-
 const OptionCard = ({
   optionNumber,
   options,
@@ -19,7 +18,7 @@ const OptionCard = ({
   onClick,
   onInputChange,
   updateOptionInDatabase,
-  resetAllOptions,
+  resetAllOptions
 
 }) => {
   const [inputValues, setInputValues] = useState(
@@ -29,10 +28,8 @@ const OptionCard = ({
     }, {})
   );
 
-  const [isOptionPublic, setIsOptionPublic] = useState(() => isPublic);
-  
- 
-  
+
+
   const handleInputChange = (optionId, value) => {
     setInputValues({
       ...inputValues,
@@ -138,51 +135,30 @@ const OptionCard = ({
   };
   return (
     <>
-      <div
-    className={`w-full p-4 lg:w-1/3 m-0.25 mb-4 bg-gray-200 rounded-lg shadow-md cursor-pointer hover:bg-green-100 focus:outline-none focus:shadow-outline-green ${
-      isOptionPublic ? "bg-white" : isActive ? "bg-green-100 shadow-outline-green" : ""
-    }`}
-        tabIndex="0"
-        onClick={onClick}
-        onKeyDown={(e) => e.key === " " && onClick()}
-      >
-        <div>
-          {isSelected ? (
-            <div className="inline-block w-5 h-5 rounded-full bg-green-500 text-white text-center leading-5 font-bold">
-              ✓
-            </div>
-          ) : (
-            ""
-          )}
+  
+    <div
+ className={` w-full p-4 lg:w-1/3 m-0.25  mb-4 bg-white rounded-lg shadow-md cursor-pointer hover:bg-green-100 focus:outline-none focus:shadow-outline-green ${
+  isActive ? "bg-green-100 shadow-outline-green" : ""
+}`}
+  tabIndex="0"
+  onClick={onClick}
+  onKeyDown={(e) => e.key === " " && onClick()}
+>
+  <div className=" flex justify-between items-center mb-2 ">
+    <h1 className="uppercase text-sm tracking-wide text-blue-800">
+      Option {optionNumber}
+    </h1>
+    {isMostValued && (
+      <span className="text-green-500 text-sm font-bold">$ BEST VALUE</span>
+    )}
+    {isActive && (
+      <button onClick={handleSelectClick}>
+        <div className="bg-green-400 p-2 rounded-sm shadow-sm inline-block text-white rounded-lg px-2 py-1 hover:opacity-80">
+          Select
         </div>
-        
-        <div className=" flex justify-between items-center mb-2 ">
-          <h1 className="uppercase text-sm tracking-wide text-blue-800">
-            Option {optionNumber}
-          </h1>
-
-          <button
-              onClick={handleIsPublicClick}
-              className={`px-2 py-1 text-xs rounded-md ${
-                // isOptionPublic ? 'bg-green-500 text-white' : 'bg-gray-500 text-white'
-                isOptionPublic ? 'bg-gray-500 text-white' : 'bg-green-500 text-white'
-              }`}
-            >
-              {isOptionPublic ? 'Hide' : 'Make Public'}
-            </button>
-          {isMostValued && (
-            <span className="text-green-500 text-sm font-bold">
-              $ BEST VALUE
-            </span>
-          )}
-          {isActive && (
-            <button onClick={handleSelectClick}>
-              <div className="bg-green-400 p-2 rounded-sm shadow-sm inline-block text-white rounded-lg px-2 py-1 hover:opacity-80">
-                Select
-              </div>
-            </button>
-          )}
-        </div>
+      </button>
+    )}
+  </div>
 
         <div className="mb-2 font-semibold text-blue-800 text-sm">
           <span className="text-sm mr-1">Total Price:</span>

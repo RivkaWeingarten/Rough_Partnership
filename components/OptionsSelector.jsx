@@ -4,8 +4,6 @@ import { useState, useEffect } from "react";
 import { totalPriceWithDiscount, formatNumberCommas } from "@/lib/utils";
 import changeOptionData from "@/app/actions/updateOption";
 import OptionCard from "@/components/OptionCard";
-
-
 import { toast } from "react-toastify";
 
 const updateOptionInDatabase = async (optionId, updateData) => {
