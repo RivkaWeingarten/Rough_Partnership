@@ -103,6 +103,7 @@ model Diamond {
   estimatedColor   String
   estimatedClarity String
   estimatedProgram String
+  estimatedShape   String ?
   estDiscount      Float
   location         String
   isPolished       Boolean 

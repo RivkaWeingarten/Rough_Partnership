@@ -22,6 +22,7 @@ const OptionCard = ({
   resetAllOptions,
 
 }) => {
+  
   const [inputValues, setInputValues] = useState(
     options.reduce((acc, option) => {
       acc[option.id] = option.estDiscount;
@@ -30,8 +31,8 @@ const OptionCard = ({
   );
 
   const [isOptionPublic, setIsOptionPublic] = useState(() => isPublic);
-  
- 
+  const [isOptionMostValued, setIsOptionMostValued] = useState(() => isMostValued);
+  const [isOptionGroupSelected, setIsOptionGroupSelected] = useState(() => isSelected);
   
   const handleInputChange = (optionId, value) => {
     setInputValues({
@@ -100,11 +101,12 @@ const OptionCard = ({
 
       // Step 2: Set all options in the current option group to select = true
       const selectedOptions = options.map((option) => {
-        updateOptionInDatabase(option.id, { selected: true });
+        updateOptionInDatabase(option.id, { selected: true, isPublic: true });
 
         return {
           optionId: option.id,
           estimatedWeight: option.estWeight,
+          estimatedShape: option.estShape,
           estimatedColor: option.estColor,
           estimatedClarity: option.estClarity,
           estDiscount: parseFloat(option.estDiscount),
@@ -132,9 +134,13 @@ const OptionCard = ({
       }
 
       toast.success("Diamond records added successfully");
+
+      setIsOptionGroupSelected(true);
     } catch (error) {
       toast.error(`Error adding diamond record: ${error.message}`);
     }
+   
+
   };
   return (
     <>
@@ -147,7 +153,7 @@ const OptionCard = ({
         onKeyDown={(e) => e.key === " " && onClick()}
       >
         <div>
-          {isSelected ? (
+          {isOptionGroupSelected ? (
             <div className="inline-block w-5 h-5 rounded-full bg-green-500 text-white text-center leading-5 font-bold">
               ✓
             </div>
@@ -168,7 +174,7 @@ const OptionCard = ({
                 isOptionPublic ? 'bg-gray-500 text-white' : 'bg-green-500 text-white'
               }`}
             >
-              {isOptionPublic ? 'Hide' : 'Make Public'}
+              {isOptionPublic ? 'Hide' : 'Share'}
             </button>
           {isMostValued && (
             <span className="text-green-500 text-sm font-bold">
