@@ -10,7 +10,6 @@ function AddCrystalForm({lotName}) {
   const formRef = useRef(null);
   const [stones, setStones] = useState([{ id: "A", visible: true }]);
   const [currentModel, setCurrentModel] = useState(1);
-
   const [visibleStones, setVisibleStones] = useState({});
 
   const unhideStone = (letter, index) => {
@@ -40,15 +39,15 @@ function AddCrystalForm({lotName}) {
     return currentStonePartLetter + orStoneNumber;
   };
 
-  const addStone = () => {
-    const lastStoneId = stones[stones.length - 1].id;
-    const newId = nextStonePart(lastStoneId);
-    if (newId <= "D") {
-      setStones([...stones, { id: newId, visible: true }]);
-    } else {
-      toast.error("Only A, B, C and D stones are allowed.");
-    }
-  };
+  // const addStone = () => {
+  //   const lastStoneId = stones[stones.length - 1].id;
+  //   const newId = nextStonePart(lastStoneId);
+  //   if (newId <= "D") {
+  //     setStones([...stones, { id: newId, visible: true }]);
+  //   } else {
+  //     toast.error("Only A, B, C and D stones are allowed.");
+  //   }
+  // };
 
   // const addStoneProgram = () => {
   //   const lastStoneId = stones[stones.length - 1].id;
@@ -65,22 +64,22 @@ function AddCrystalForm({lotName}) {
   //   setStones([...stones, { id: newId, visible: true }]);
   // };
 
-  const handleAddOrModel = () => {
-    nextModel();
-    const newStones = stones.map((stone) => ({
-      ...stone,
-      id: `${stone.id}_${currentModel}`,
-    }));
-    setStones([...stones, ...newStones]);
-  };
+  // const handleAddOrModel = () => {
+  //   nextModel();
+  //   const newStones = stones.map((stone) => ({
+  //     ...stone,
+  //     id: `${stone.id}_${currentModel}`,
+  //   }));
+  //   setStones([...stones, ...newStones]);
+  // };
 
-  const toggleVisibility = (id) => {
-    setStones(
-      stones.map((stone) =>
-        letter === id ? { ...stone, visible: !stone.visible } : stone
-      )
-    );
-  };
+  // const toggleVisibility = (id) => {
+  //   setStones(
+  //     stones.map((stone) =>
+  //       letter === id ? { ...stone, visible: !stone.visible } : stone
+  //     )
+  //   );
+  // };
 
   const addAction = async (event) => {
     event.preventDefault();
@@ -286,9 +285,8 @@ function AddCrystalForm({lotName}) {
                 name="machineColor"
                 className="border rounded w-full sm:w-24 py-2 px-3"
               />
-            </div>
-            <div className="mb-4 flex flex-wrap items-center space-y-4 sm:space-y-0 sm:space-x-4">
-              <label
+
+<label
                 htmlFor="type"
                 className="block text-gray-700 font-bold mb-2 sm:mb-0 sm:w-auto w-full"
               >
@@ -309,20 +307,25 @@ function AddCrystalForm({lotName}) {
                 <option value="Strong Yellow">Strong Yellow</option>
                 <option value="Very Strong Yellow">Very Strong Yellow</option>
               </select>
-              <label className="block text-gray-700 font-bold mb-2 sm:mb-0 sm:w-auto w-full">
-                Graining
-              </label>
-              <input
+            </div>
+            <div className="mb-4 flex flex-wrap items-center space-y-4 sm:space-y-0 sm:space-x-4">
+            
+              {/* <label className="block text-gray-700 font-bold mb-2 sm:mb-0 sm:w-auto w-full">
+               Notes
+              </label> */}
+              <textarea
                 type="text"
-                id="graining"
-                name="graining"
-                className="border rounded w-full sm:w-24 py-2 px-3"
+                id="notes"
+                name="notes"
+                placeholder="Notes"
+                rows={1}
+                className="border rounded w-full sm:w-30 py-2 px-3"
               />
             </div>
 
             <div className="mb-4">
               <span className="text-sm text-grey-500">
-                (Can Leave Grades Blank) {"  "}
+                (Will inherit if left Blank) {"  "}
               </span>
               {["A", "B", "C", "D"].map((stone) => (
                 <div>
@@ -492,7 +495,7 @@ function AddCrystalForm({lotName}) {
               </div>
             </div>
 
-            <div className="flex justify-between">
+            {/* <div className="flex justify-between">
               <button
                 type="button"
                 onClick={addStone}
@@ -507,7 +510,7 @@ function AddCrystalForm({lotName}) {
               >
                 Add Another OR Model
               </button>
-            </div>
+            </div> */}
 
             <div className="text-center mt-6">
               <button

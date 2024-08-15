@@ -31,7 +31,8 @@ const importRapCsv = async () => {
       // Insert records into the database
       for (const record of records) {
         try {
-          await db.PSRap.create({
+          await db.PSRap.update({
+            where: { shape_color_clarity_size: record['Shape-Color-Clarity'] }, 
             data: {
               shape_color_clarity_size: record['Shape-Color-Clarity'],
               list: parseFloat(record['List']),

@@ -32,3 +32,13 @@ export const updateDiamondRecord = async (resourceNumber, diamondData) => {
 }
 
 
+export const deleteDiamondRecord = async (resourceNumber) => {
+  try {
+    const deletedDiamond = await db.diamond.delete({
+      where: { resourceNumber },
+    });
+    return deletedDiamond;
+  } catch (error) {
+    throw new Error(`Failed to delete diamond record: ${error.message}`);
+  }
+};

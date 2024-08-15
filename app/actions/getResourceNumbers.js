@@ -66,12 +66,26 @@ async function getResourceNumbers(lotId) {
 
       const totalDiamonds = roughItem.diamonds.length;
       const totalOptions = filteredOptions.length;
+      const diamondsFlat = lot.rough.flatMap(roughItem => roughItem.diamonds);
+      const totalTtlList = diamondsFlat.reduce(
+        (sum, diamond) => sum + diamond.actTotalList,
+        0
+      );
+
+      const totalPrice = diamondsFlat.reduce(
+        (sum, diamond) => sum + diamond.estTotalPrice,
+        0
+      )
+      
+      
 
       return {
         ...roughItem,
         options: filteredOptions,
         totalDiamonds,
         totalOptions,
+           totalTtlList,
+        totalPrice,
       };
     });
 

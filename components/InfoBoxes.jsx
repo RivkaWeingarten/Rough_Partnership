@@ -1,5 +1,3 @@
-
-
 // Desc: This component is used to display the information boxes on the home page.
 import React from "react";
 import InfoBox from "./InfoBox";
@@ -23,19 +21,25 @@ async function InfoBoxes() {
                 <InfoBox
                   heading={lot.lotName}
                   backgroundColor="bg-gray-100"
+                  lot={lot}
                   buttonInfo={{
-                  
                     link: `/lots/${lot.lotName}`,
                     backgroundColor: "bg-black",
                   }}
-                                    lot={lot}buttonInfo2={{
-                  
+             
+                  buttonInfo2={{
                     link: `/lots/${lot.lotName}/add-crystal`,
                     backgroundColor: "bg-green-400",
                   }}
+                  buttonInfo3={{
+                    link: `/lots/${lot.lotName}/diamonds`,
+                    backgroundColor: "bg-purple-400",
+                  }}
                 >
-               Value: {formatNumberCommas(lot.totalPrice)} {""}
-               Total List: {formatNumberCommas(lot.totalTtlList)}
+                  Value: {formatNumberCommas(lot.totalPrice)} {""}
+                  Total List: {formatNumberCommas(lot.totalTtlList)}
+                 {''} {formatNumberCommas(100 - (lot.totalPrice / lot.totalTtlList) * 100)}%
+                  {/* Cost: {formatNumberCommas(lot.totalCost)} */}
                 </InfoBox>
               </div>
             ))
