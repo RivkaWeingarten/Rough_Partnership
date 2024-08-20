@@ -6,6 +6,11 @@ import {
   updateDiamondRecord,
 } from "@/app/actions/addDiamond";
 import { formatNumberCommas } from "@/lib/utils";
+import EditOptionForm from "@/components/EditOptionForm";
+import getRap from "@/app/actions/getRap";
+import { totalPriceWithDiscount } from "@/lib/utils";
+import optionsProgram from "@/roughOptionsPrograms.json";
+import { list } from "postcss";
 
 
 const OptionCard = ({
@@ -22,6 +27,7 @@ const OptionCard = ({
   resetAllOptions,
 
 }) => {
+  
   const [inputValues, setInputValues] = useState(
     options.reduce((acc, option) => {
       acc[option.id] = option.estDiscount;
@@ -30,8 +36,11 @@ const OptionCard = ({
   );
 
   const [isOptionPublic, setIsOptionPublic] = useState(() => isPublic);
-  
- 
+  const [isOptionMostValued, setIsOptionMostValued] = useState(() => isMostValued);
+  const [isOptionGroupSelected, setIsOptionGroupSelected] = useState(() => isSelected);
+
+  const [isEditPopupOpen, setIsEditPopupOpen] = useState(false);
+  const [selectedOption, setSelectedOption] = useState(null);
   
   const handleInputChange = (optionId, value) => {
     setInputValues({
@@ -91,8 +100,6 @@ const OptionCard = ({
   };
  
       
-   
-  
   const handleSelectClick = async () => {
     try {
       // Step 1: Reset all options to select = false
@@ -100,11 +107,12 @@ const OptionCard = ({
 
       // Step 2: Set all options in the current option group to select = true
       const selectedOptions = options.map((option) => {
-        updateOptionInDatabase(option.id, { selected: true });
+        updateOptionInDatabase(option.id, { selected: true, isPublic: true });
 
         return {
           optionId: option.id,
           estimatedWeight: option.estWeight,
+          estimatedShape: option.estShape,
           estimatedColor: option.estColor,
           estimatedClarity: option.estClarity,
           estDiscount: parseFloat(option.estDiscount),
@@ -132,10 +140,80 @@ const OptionCard = ({
       }
 
       toast.success("Diamond records added successfully");
+
+      setIsOptionGroupSelected(true);
     } catch (error) {
       toast.error(`Error adding diamond record: ${error.message}`);
     }
+   
+   
   };
+
+  const handleOpenEditPopup = (option) => {
+    try {
+      setSelectedOption(option);
+      setIsEditPopupOpen(true);
+    } catch (error) {
+      toast.error(`Error opening edit popup: ${error.message}`);
+    }
+  };
+  
+  const handleCloseEditPopup = () => {
+    try {
+      setIsEditPopupOpen(false);
+      setSelectedOption(null);
+    } catch (error) {
+      toast.error(`Error closing edit popup: ${error.message}`);
+    }
+  };
+  
+  const handleOptionSubmit = async (updatedOption) => {
+    try {
+      const program = optionsProgram.find(
+        (opt) => opt.program === updatedOption.estProgram
+      );
+      const estShape = program ? program.estShape : null;
+      const estProgram = program ? program.program : null;
+      const company = program ? program.company : null;
+      const isPublic = company === "KW" ? program.isPublic : false;
+
+      const estList = await getRap(
+        estShape,
+        updatedOption.estWeight,
+        updatedOption.estColor,
+        updatedOption.estClarity,
+             );
+
+      
+    console.log(
+      estList,
+      );
+      const estPrice = totalPriceWithDiscount(
+      estList.caratprice,
+        updatedOption.estDiscount,
+        updatedOption.estWeight
+      );
+  
+      const optionWithUpdatedPrice = {
+        ...updatedOption,
+        estPrice,
+        totalEstList: parseFloat(estList.totalListPrice.toString()),
+        estList: parseFloat(estList.caratprice.toString()), 
+        isPublic,
+        estProgram,
+        company,
+        estShape,
+      };
+  
+      console.log(optionWithUpdatedPrice);
+      await updateOptionInDatabase(optionWithUpdatedPrice.id, optionWithUpdatedPrice);
+      toast.success("Option updated successfully");
+    } catch (error) {
+      toast.error(`Error updating option: ${error.message}`);
+    }
+  };
+  
+
   return (
     <>
       <div
@@ -147,7 +225,7 @@ const OptionCard = ({
         onKeyDown={(e) => e.key === " " && onClick()}
       >
         <div>
-          {isSelected ? (
+          {isOptionGroupSelected ? (
             <div className="inline-block w-5 h-5 rounded-full bg-green-500 text-white text-center leading-5 font-bold">
               ✓
             </div>
@@ -168,7 +246,7 @@ const OptionCard = ({
                 isOptionPublic ? 'bg-gray-500 text-white' : 'bg-green-500 text-white'
               }`}
             >
-              {isOptionPublic ? 'Hide' : 'Make Public'}
+              {isOptionPublic ? 'Hide' : 'Share'}
             </button>
           {isMostValued && (
             <span className="text-green-500 text-sm font-bold">
@@ -231,6 +309,12 @@ const OptionCard = ({
                         ${formatNumberCommas(option.estPrice)}
                       </td>
                       <td className="p-1">{option.notes}</td>
+
+                      <td className="p-1">
+                        <button onClick={() => handleOpenEditPopup(option)}>
+                        ✏️
+                        </button>
+                      </td>
                     </tr>
                   ))}
                   <tr className="font-semibold">
@@ -240,6 +324,7 @@ const OptionCard = ({
                     <td className="p-1">
                       ${formatNumberCommas(totalEstPrice)}
                     </td>
+                    
                     <td className="p-1"></td>
                   </tr>
                 </tbody>
@@ -248,6 +333,14 @@ const OptionCard = ({
           </div>
         </div>
       </div>
+
+      {isEditPopupOpen && (
+        <EditOptionForm
+          option={selectedOption}
+          onClose={handleCloseEditPopup}
+          onSubmit={handleOptionSubmit}
+        />
+      )}
     </>
   );
 };

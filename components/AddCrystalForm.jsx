@@ -469,8 +469,8 @@ function AddCrystalForm({lotName}) {
                           />
 
                           <textarea
-                            id={`notes.${letter}.${option.program}`}
-                            name={`notes.${letter}.${option.program}`}
+                            id={`notes.${letter}.${index}`}
+                            name={`notes.${letter}.${index}`}
                             className="block w-full p-1 border border-gray-300 rounded-md sm:w-auto sm:min-w-[200px]"
                             rows={1}
                             placeholder="Notes"
