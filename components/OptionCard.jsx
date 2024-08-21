@@ -12,7 +12,6 @@ import { totalPriceWithDiscount } from "@/lib/utils";
 import optionsProgram from "@/roughOptionsPrograms.json";
 import { list } from "postcss";
 
-
 const OptionCard = ({
   optionNumber,
   options,
@@ -25,9 +24,8 @@ const OptionCard = ({
   onInputChange,
   updateOptionInDatabase,
   resetAllOptions,
-
+  handleOptionUpdate,
 }) => {
-  
   const [inputValues, setInputValues] = useState(
     options.reduce((acc, option) => {
       acc[option.id] = option.estDiscount;
@@ -36,12 +34,16 @@ const OptionCard = ({
   );
 
   const [isOptionPublic, setIsOptionPublic] = useState(() => isPublic);
-  const [isOptionMostValued, setIsOptionMostValued] = useState(() => isMostValued);
-  const [isOptionGroupSelected, setIsOptionGroupSelected] = useState(() => isSelected);
+  const [isOptionMostValued, setIsOptionMostValued] = useState(
+    () => isMostValued
+  );
+  const [isOptionGroupSelected, setIsOptionGroupSelected] = useState(
+    () => isSelected
+  );
 
   const [isEditPopupOpen, setIsEditPopupOpen] = useState(false);
-  const [selectedOption, setSelectedOption] = useState(null);
-  
+  const [editSelectedOption, setEditSelectedOption] = useState(null);
+
   const handleInputChange = (optionId, value) => {
     setInputValues({
       ...inputValues,
@@ -50,7 +52,7 @@ const OptionCard = ({
     onInputChange(optionId, value);
   };
 
-  const handleFormSubmit = (optionId, event) => {
+  const handleDiscFormSubmit = (optionId, event) => {
     event.preventDefault();
     const value = event.target.elements[0].value;
     handleInputChange(optionId, value);
@@ -60,46 +62,31 @@ const OptionCard = ({
   const handleIsPublicClick = async () => {
     try {
       // Step 1: Toggle the public status of the option
-      setIsOptionPublic(prevState => {
+      setIsOptionPublic((prevState) => {
         const newIsPublic = !prevState;
-  
+
         // Step 2: Update the public status of each option based on the new value
-        options.forEach(option => {
-          updateOptionInDatabase(option.id, { isPublic: newIsPublic });
+        options.forEach((option) => {
+          handleOptionUpdate(option.id, { isPublic: newIsPublic });
+        
         });
-  
-        // Return the new public status to update the state
+     
+       // Return the new public status to update the state
+     
         return newIsPublic;
+    
       });
-  
-      // If you need to do something with the publicOptions, handle it here
-      // For example, if you need to prepare a list of options:
-      const publicOptions = options.map(option => ({
-        optionId: option.id,
-        estimatedWeight: option.estWeight,
-        estimatedColor: option.estColor,
-        estimatedClarity: option.estClarity,
-        estDiscount: parseFloat(option.estDiscount),
-        estTotalPrice: parseFloat(option.estPrice),
-        actTotalList: parseFloat(option.totalEstList),
-        estimatedProgram: option.estProgram,
-        resourceNumber: option.resourceNumber,
-        company: option.company,
-        location: "WDM BOTSWANA",
-        isPolished: false,
-        inventory: "NA",
-        giaNumber: "NA",
-        roughResourceNumber: option.roughResourceNumber,
-      }));
-  
-      // Optionally, you can use `publicOptions` here
-  
+
+       
+
+      
+
     } catch (error) {
       toast.error(`Error: ${error.message}`);
     }
+
   };
- 
-      
+
   const handleSelectClick = async () => {
     try {
       // Step 1: Reset all options to select = false
@@ -145,29 +132,27 @@ const OptionCard = ({
     } catch (error) {
       toast.error(`Error adding diamond record: ${error.message}`);
     }
-   
-   
   };
 
   const handleOpenEditPopup = (option) => {
     try {
-      setSelectedOption(option);
+      setEditSelectedOption(option);
       setIsEditPopupOpen(true);
     } catch (error) {
       toast.error(`Error opening edit popup: ${error.message}`);
     }
   };
-  
+
   const handleCloseEditPopup = () => {
     try {
       setIsEditPopupOpen(false);
-      setSelectedOption(null);
+      setEditSelectedOption(null);
     } catch (error) {
       toast.error(`Error closing edit popup: ${error.message}`);
     }
   };
-  
-  const handleOptionSubmit = async (updatedOption) => {
+
+  const handleEditOptionSubmit = async (updatedOption) => {
     try {
       const program = optionsProgram.find(
         (opt) => opt.program === updatedOption.estProgram
@@ -175,51 +160,55 @@ const OptionCard = ({
       const estShape = program ? program.estShape : null;
       const estProgram = program ? program.program : null;
       const company = program ? program.company : null;
-      const isPublic = company === "KW" ? program.isPublic : false;
+      const isPublic = company === "KW" ? true : false;
 
       const estList = await getRap(
         estShape,
         updatedOption.estWeight,
         updatedOption.estColor,
-        updatedOption.estClarity,
-             );
-
-      
-    console.log(
-      estList,
+        updatedOption.estClarity
       );
+
       const estPrice = totalPriceWithDiscount(
-      estList.caratprice,
+        estList.caratprice,
         updatedOption.estDiscount,
         updatedOption.estWeight
       );
-  
+
       const optionWithUpdatedPrice = {
         ...updatedOption,
         estPrice,
         totalEstList: parseFloat(estList.totalListPrice.toString()),
-        estList: parseFloat(estList.caratprice.toString()), 
+        estList: parseFloat(estList.caratprice.toString()),
         isPublic,
         estProgram,
         company,
         estShape,
       };
-  
-      console.log(optionWithUpdatedPrice);
-      await updateOptionInDatabase(optionWithUpdatedPrice.id, optionWithUpdatedPrice);
+
+      await handleOptionUpdate(
+        optionWithUpdatedPrice.id,
+        optionWithUpdatedPrice
+      );
+
+      setIsOptionPublic(optionWithUpdatedPrice.isPublic);
+      // setIsOptionMostValued(isMostValued())
       toast.success("Option updated successfully");
     } catch (error) {
       toast.error(`Error updating option: ${error.message}`);
     }
   };
-  
 
   return (
     <>
       <div
-    className={`w-full p-4 lg:w-1/3 m-0.25 mb-4 bg-gray-200 rounded-lg shadow-md cursor-pointer hover:bg-green-100 focus:outline-none focus:shadow-outline-green ${
-      isOptionPublic ? "bg-white" : isActive ? "bg-green-100 shadow-outline-green" : ""
-    }`}
+        className={`w-full p-4 lg:w-1/3 m-0.25 mb-4 bg-gray-200 rounded-lg shadow-md cursor-pointer hover:bg-green-100 focus:outline-none focus:shadow-outline-green ${
+          isOptionPublic
+            ? "bg-white"
+            : isActive
+            ? "bg-green-100 shadow-outline-green"
+            : ""
+        }`}
         tabIndex="0"
         onClick={onClick}
         onKeyDown={(e) => e.key === " " && onClick()}
@@ -233,21 +222,23 @@ const OptionCard = ({
             ""
           )}
         </div>
-        
+
         <div className=" flex justify-between items-center mb-2 ">
           <h1 className="uppercase text-sm tracking-wide text-blue-800">
             Option {optionNumber}
           </h1>
 
           <button
-              onClick={handleIsPublicClick}
-              className={`px-2 py-1 text-xs rounded-md ${
-                // isOptionPublic ? 'bg-green-500 text-white' : 'bg-gray-500 text-white'
-                isOptionPublic ? 'bg-gray-500 text-white' : 'bg-green-500 text-white'
-              }`}
-            >
-              {isOptionPublic ? 'Hide' : 'Share'}
-            </button>
+            onClick={handleIsPublicClick}
+            className={`px-2 py-1 text-xs rounded-md ${
+              // isOptionPublic ? 'bg-green-500 text-white' : 'bg-gray-500 text-white'
+              isOptionPublic
+                ? "bg-gray-500 text-white"
+                : "bg-purple-500 text-white"
+            }`}
+          >
+            {isOptionPublic ? "Hide" : "Share"}
+          </button>
           {isMostValued && (
             <span className="text-green-500 text-sm font-bold">
               $ BEST VALUE
@@ -290,7 +281,9 @@ const OptionCard = ({
 
                       <td className="p-1">{option.estNotes}</td>
                       <td className="p-1">
-                        <form onSubmit={(e) => handleFormSubmit(option.id, e)}>
+                        <form
+                          onSubmit={(e) => handleDiscFormSubmit(option.id, e)}
+                        >
                           <input
                             type="number"
                             className="mt-1 p-2 border border-gray-300 rounded w-1/3"
@@ -312,7 +305,7 @@ const OptionCard = ({
 
                       <td className="p-1">
                         <button onClick={() => handleOpenEditPopup(option)}>
-                        ✏️
+                          ✏️
                         </button>
                       </td>
                     </tr>
@@ -324,7 +317,7 @@ const OptionCard = ({
                     <td className="p-1">
                       ${formatNumberCommas(totalEstPrice)}
                     </td>
-                    
+
                     <td className="p-1"></td>
                   </tr>
                 </tbody>
@@ -336,9 +329,9 @@ const OptionCard = ({
 
       {isEditPopupOpen && (
         <EditOptionForm
-          option={selectedOption}
+          option={editSelectedOption}
           onClose={handleCloseEditPopup}
-          onSubmit={handleOptionSubmit}
+          onSubmit={handleEditOptionSubmit}
         />
       )}
     </>

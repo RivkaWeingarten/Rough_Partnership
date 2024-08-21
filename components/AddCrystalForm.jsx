@@ -128,7 +128,7 @@ function AddCrystalForm({lotName}) {
               const estShape = program ? program.estShape : null;
               const estProgram = program ? program.program : null;
               const company = program ? program.company : null;
-              const isPublic = company==="KW" ? program.isPublic : false;
+              const isPublic = company==="KW" ? true : false;
               console.log(
                 `shape is ${estShape} program is ${estProgram} est weight is ${estWeight}
                   est color is ${estColor} est clarity is ${estClarity} `

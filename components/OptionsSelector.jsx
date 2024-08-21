@@ -20,7 +20,7 @@ const updateOptionInDatabase = async (optionId, updateData) => {
     };
 
     const updatedOption = await changeOptionData(optionId, parsedData);
-    // toast.success(`Option updated successfully`);
+
     return updatedOption;
   } catch (error) {
     toast.error(`Error updating option: ${error.message}`);
@@ -39,6 +39,18 @@ const OptionsSelector = ({ options }) => {
     acc[optionNumber].push(option);
     return acc;
   }, {});
+
+  const handleOptionUpdate = (optionId, newData) => {
+    const updatedOptions = allOptions.map((option) => {
+      if (option.id === optionId) {
+        updateOptionInDatabase(optionId, newData); // Update the database
+        return { ...option, ...newData }; // Update the local state
+      }
+      return option;
+    });
+
+    setAllOptions(updatedOptions); // Update the state with new data
+  };
   ("reset all options to false");
   const resetAllOptions = () => {
     const resetOptions = allOptions.map((option) => {
@@ -47,7 +59,7 @@ const OptionsSelector = ({ options }) => {
     });
 
     setAllOptions(resetOptions); // Update state
-  }; 
+  };
   const handleInputChange = (optionId, newDiscount) => {
     const updatedOptions = allOptions.map((option) => {
       if (option.id === optionId) {
@@ -68,7 +80,6 @@ const OptionsSelector = ({ options }) => {
     setAllOptions(updatedOptions);
   };
 
-
   const isOptionNumberPublic = () => {
     const publicOptionNumbers = new Set();
 
@@ -87,7 +98,7 @@ const OptionsSelector = ({ options }) => {
   };
 
   const isOptionGroupPublic = isOptionNumberPublic();
-  
+
   //calculate the most valued option
   const calculateMostValuedOption = () => {
     let mostValuedOptionNumber = null;
@@ -109,30 +120,29 @@ const OptionsSelector = ({ options }) => {
 
   const mostValuedOptionNumber = calculateMostValuedOption();
 
+  const calculateMostValuedPublicOption = () => {
+    const publicOptionNumbers = isOptionNumberPublic();
+    let mostValuedOptionNumber = null;
+    let highestValue = 0;
 
-const calculateMostValuedPublicOption = () => {
-  const publicOptionNumbers = isOptionNumberPublic();
-  let mostValuedOptionNumber = null;
-  let highestValue = 0;
+    Object.entries(groupedOptions).forEach(([optionNumber, options]) => {
+      if (publicOptionNumbers.has(optionNumber)) {
+        const totalEstPrice = options.reduce(
+          (acc, option) => acc + option.estPrice,
+          0
+        );
 
-  Object.entries(groupedOptions).forEach(([optionNumber, options]) => {
-    if (publicOptionNumbers.has(optionNumber)) {
-      const totalEstPrice = options.reduce(
-        (acc, option) => acc + option.estPrice,
-        0
-      );
-
-      if (totalEstPrice > highestValue) {
-        highestValue = totalEstPrice;
-        mostValuedOptionNumber = optionNumber;
+        if (totalEstPrice > highestValue) {
+          highestValue = totalEstPrice;
+          mostValuedOptionNumber = optionNumber;
+        }
       }
-    }
-  });
+    });
 
-  return mostValuedOptionNumber;
-};
+    return mostValuedOptionNumber;
+  };
 
-const mostValuedPublicOptionNumber = calculateMostValuedPublicOption();
+  const mostValuedPublicOptionNumber = calculateMostValuedPublicOption();
 
   //check if a option is selected
   const isOptionNumberSelected = () => {
@@ -148,9 +158,6 @@ const mostValuedPublicOptionNumber = calculateMostValuedPublicOption();
   };
 
   const isOptionGroupSelected = isOptionNumberSelected();
-
-
-
 
   return (
     <div className="flex flex-wrap -mx-2">
@@ -175,6 +182,7 @@ const mostValuedPublicOptionNumber = calculateMostValuedPublicOption();
               onInputChange={handleInputChange}
               updateOptionInDatabase={updateOptionInDatabase}
               resetAllOptions={resetAllOptions}
+              handleOptionUpdate={handleOptionUpdate}
             />
           );
         }
