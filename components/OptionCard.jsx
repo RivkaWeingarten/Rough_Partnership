@@ -4,6 +4,7 @@ import {
   checkResourceNumberExists,
   addDiamondRecord,
   updateDiamondRecord,
+  deleteDiamondRecord
 } from "@/app/actions/addDiamond";
 import { formatNumberCommas } from "@/lib/utils";
 import EditOptionForm from "@/components/EditOptionForm";
@@ -77,9 +78,6 @@ const OptionCard = ({
     
       });
 
-       
-
-      
 
     } catch (error) {
       toast.error(`Error: ${error.message}`);
@@ -91,14 +89,46 @@ const OptionCard = ({
     try {
       // Step 1: Reset all options to select = false
       resetAllOptions();
+      const countOptions = options.length;
+
+      // Conditional logic for deleting records based on the count of selected options
+      if (countOptions === 1) {
+        const existsB = await checkResourceNumberExists(options[0].roughResourceNumber + "B");
+        if (existsB) {
+          await deleteDiamondRecord(options[0].roughResourceNumber + "B");
+        }
+        const existsC = await checkResourceNumberExists(options[0].roughResourceNumber + "C");
+        if (existsC) {
+          await deleteDiamondRecord(options[0].roughResourceNumber + "C");
+        }
+        const existsD = await checkResourceNumberExists(options[0].roughResourceNumber + "D");
+        if (existsD) {
+          await deleteDiamondRecord(options[0].roughResourceNumber + "D");
+        }
+      } else if (countOptions === 2) {
+        const existsC = await checkResourceNumberExists(options[0].roughResourceNumber + "C");
+        if (existsC) {
+          await deleteDiamondRecord(options[0].roughResourceNumber + "C");
+        }
+        const existsD = await checkResourceNumberExists(options[0].roughResourceNumber + "D");
+        if (existsD) {
+          await deleteDiamondRecord(options[0].roughResourceNumber + "D");
+        }
+      } else if (countOptions === 3) {
+        const existsD = await checkResourceNumberExists(options[0].roughResourceNumber + "D");
+        if (existsD) {
+          await deleteDiamondRecord(options[0].roughResourceNumber + "D");
+        }
+      }
 
       // Step 2: Set all options in the current option group to select = true
       const selectedOptions = options.map((option) => {
-        updateOptionInDatabase(option.id, { selected: true, isPublic: true });
+
+        handleOptionUpdate(option.id, { selected: true, isPublic: true });
 
         return {
           optionId: option.id,
-          estimatedWeight: option.estWeight,
+          estimatedWeight: parseFloat(option.estWeight),
           estimatedShape: option.estShape,
           estimatedColor: option.estColor,
           estimatedClarity: option.estClarity,
@@ -115,6 +145,8 @@ const OptionCard = ({
           roughResourceNumber: option.roughResourceNumber,
         };
       });
+
+      
 
       //  Step 3: Update Diamonds table
       for (const option of selectedOptions) {
@@ -180,6 +212,7 @@ const OptionCard = ({
         estPrice,
         totalEstList: parseFloat(estList.totalListPrice.toString()),
         estList: parseFloat(estList.caratprice.toString()),
+        estWeight: parseFloat(updatedOption.estWeight),
         isPublic,
         estProgram,
         company,
@@ -286,7 +319,7 @@ const OptionCard = ({
                         >
                           <input
                             type="number"
-                            className="mt-1 p-2 border border-gray-300 rounded w-1/3"
+                            className="mt-1 p-2 border border-gray-300 rounded w-1/2"
                             value={inputValues[option.id]}
                             onChange={(e) =>
                               setInputValues({

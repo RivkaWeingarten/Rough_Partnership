@@ -5,8 +5,9 @@ import options from "@/roughOptionsPrograms.json";
 import { toast } from "react-toastify";
 import addCrystal from "@/app/actions/addCrystal";
 import getRap from "@/app/actions/getRap";
+import OptionOnAddCrystalForm from "./OptionOnAddCrystalForm";
 
-function AddCrystalForm({lotName}) {
+function AddCrystalForm({ lotName }) {
   const formRef = useRef(null);
   const [stones, setStones] = useState([{ id: "A", visible: true }]);
   const [currentModel, setCurrentModel] = useState(1);
@@ -17,6 +18,11 @@ function AddCrystalForm({lotName}) {
       ...prev,
       [`${letter}-${index}`]: true,
     }));
+  };
+
+  // AddNewOption function
+  const addNewOption = () => {
+    setStones([...stones, { id: "", visible: true }]); // Add a new option with default values
   };
 
   const nextModel = () => {
@@ -31,13 +37,13 @@ function AddCrystalForm({lotName}) {
     return "Only ABCD stones allowed";
   };
 
-  const addOrStone = (currentStonePart) => {
-    let orStoneNumber = parseFloat(currentStonePart.slice(1));
-    let currentStonePartLetter = currentStonePart[0];
-    if (currentStonePart.length === 1) orStoneNumber = 1;
-    else orStoneNumber += 1;
-    return currentStonePartLetter + orStoneNumber;
-  };
+  // const addOrStone = (currentStonePart) => {
+  //   let orStoneNumber = parseFloat(currentStonePart.slice(1));
+  //   let currentStonePartLetter = currentStonePart[0];
+  //   if (currentStonePart.length === 1) orStoneNumber = 1;
+  //   else orStoneNumber += 1;
+  //   return currentStonePartLetter + orStoneNumber;
+  // };
 
   // const addStone = () => {
   //   const lastStoneId = stones[stones.length - 1].id;
@@ -128,7 +134,7 @@ function AddCrystalForm({lotName}) {
               const estShape = program ? program.estShape : null;
               const estProgram = program ? program.program : null;
               const company = program ? program.company : null;
-              const isPublic = company==="KW" ? true : false;
+              const isPublic = company === "KW" ? true : false;
               console.log(
                 `shape is ${estShape} program is ${estProgram} est weight is ${estWeight}
                   est color is ${estColor} est clarity is ${estClarity} `
@@ -139,7 +145,7 @@ function AddCrystalForm({lotName}) {
                 estColor,
                 estClarity
               );
-   
+
               return {
                 ABC: letter,
                 optionNumber: index + 1,
@@ -153,7 +159,7 @@ function AddCrystalForm({lotName}) {
                 estPlusMinusRColor,
                 estPlusMinusRClarity,
                 company,
-                isPublic
+                isPublic,
               };
             } catch (error) {
               console.error("Error fetching price data:", error);
@@ -184,7 +190,7 @@ function AddCrystalForm({lotName}) {
     <section className="bg-blue-50">
       <div className="container m-auto max-w-2xl py-24">
         <div className="bg-white px-6 py-8 mb-4 shadow-md rounded-md border m-4 md:m-0">
-        <form ref={formRef} onSubmit={addAction}>
+          <form ref={formRef} onSubmit={addAction}>
             <h2 className="text-3xl text-center font-semibold mb-6">
               Add Rough to Lot # {lotName}
             </h2>
@@ -286,7 +292,7 @@ function AddCrystalForm({lotName}) {
                 className="border rounded w-full sm:w-24 py-2 px-3"
               />
 
-<label
+              <label
                 htmlFor="type"
                 className="block text-gray-700 font-bold mb-2 sm:mb-0 sm:w-auto w-full"
               >
@@ -309,14 +315,13 @@ function AddCrystalForm({lotName}) {
               </select>
             </div>
             <div className="mb-4 flex flex-wrap items-center space-y-4 sm:space-y-0 sm:space-x-4">
-            
               {/* <label className="block text-gray-700 font-bold mb-2 sm:mb-0 sm:w-auto w-full">
                Notes
               </label> */}
               <textarea
                 type="text"
-                id="notes"
-                name="notes"
+                id="description"
+                name="description"
                 placeholder="Notes"
                 rows={1}
                 className="border rounded w-full sm:w-30 py-2 px-3"
@@ -495,6 +500,13 @@ function AddCrystalForm({lotName}) {
               </div>
             </div>
 
+            <button
+              type="button"
+              onClick={addNewOption}
+              className="mt-4 py-2 px-4 bg-green-500 text-white  rounded"
+            >
+              Add Another Option
+            </button>
             {/* <div className="flex justify-between">
               <button
                 type="button"

@@ -40,6 +40,17 @@ const EditOptionForm = ({ option, onClose, onSubmit }) => {
               ))}
             </select>
           </div>
+
+          <div>
+            <label>Est Weight</label>
+            <input
+              type="number"
+              name="estWeight"
+              value={formValues.estWeight}
+              onChange={handleChange}
+              className="border rounded p-2 w-full"
+            />
+          </div>
           <div>
             <label>Estimated Color</label>
             <select
@@ -104,6 +115,8 @@ const EditOptionForm = ({ option, onClose, onSubmit }) => {
           <textarea
             id="notes"
             name="notes"
+            value={formValues.notes}
+            onChange={handleChange}
             className="block w-full p-1 border border-gray-300 rounded-md sm:w-auto sm:min-w-[200px]"
             rows={1}
             placeholder="Notes"
