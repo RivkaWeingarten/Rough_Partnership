@@ -235,7 +235,7 @@ const OptionCard = ({
   return (
     <>
       <div
-        className={`w-full p-4 lg:w-1/3 m-0.25 mb-4 bg-gray-200 rounded-lg shadow-md cursor-pointer hover:bg-green-100 focus:outline-none focus:shadow-outline-green ${
+        className={`w-full p-4 lg:w-1/3 m-0.25 mb-4 bg-gray-300 rounded-lg shadow-md cursor-pointer hover:bg-green-100 focus:outline-none focus:shadow-outline-green ${
           isOptionPublic
             ? "bg-white"
             : isActive
@@ -270,7 +270,7 @@ const OptionCard = ({
                 : "bg-purple-500 text-white"
             }`}
           >
-            {isOptionPublic ? "Hide" : "Share"}
+            {isOptionPublic ? "Make Private" : "Share"}
           </button>
           {isMostValued && (
             <span className="text-green-500 text-sm font-bold">

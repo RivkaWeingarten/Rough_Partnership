@@ -10,6 +10,12 @@ const OptionOnAddCrystalForm = ({
   nextStonePart,
 }) => {
   return (
+    <>
+     <div className="border-b-2 border-black text-0xl text-center">
+                        <span className="bg-transparent px-5">
+                          {/* # {index + 1} */}
+                        </span>
+                      </div>
     <div>
       {["A", "B", "C", "D"].map((letter) => (
         <div
@@ -62,6 +68,7 @@ const OptionOnAddCrystalForm = ({
         </div>
       ))}
     </div>
+    </>
   );
 };
 

@@ -12,7 +12,7 @@ function AddCrystalForm({ lotName }) {
   const [stones, setStones] = useState([{ id: "A", visible: true }]);
   const [currentModel, setCurrentModel] = useState(1);
   const [visibleStones, setVisibleStones] = useState({});
-
+  const [optionArray, setOptionArray] = useState([...options]);
   const unhideStone = (letter, index) => {
     setVisibleStones((prev) => ({
       ...prev,
@@ -22,7 +22,14 @@ function AddCrystalForm({ lotName }) {
 
   // AddNewOption function
   const addNewOption = () => {
-    setStones([...stones, { id: "", visible: true }]); // Add a new option with default values
+    const newOption = {
+      program: "",
+      estShape: "",
+      company: "",
+    };
+
+    setOptionArray([...optionArray, newOption]); // Use setState to add a new option
+    setStones([...stones, { id: "A", visible: true }]); // Add a new stone option
   };
 
   const nextModel = () => {
@@ -37,48 +44,6 @@ function AddCrystalForm({ lotName }) {
     return "Only ABCD stones allowed";
   };
 
-  // const addOrStone = (currentStonePart) => {
-  //   let orStoneNumber = parseFloat(currentStonePart.slice(1));
-  //   let currentStonePartLetter = currentStonePart[0];
-  //   if (currentStonePart.length === 1) orStoneNumber = 1;
-  //   else orStoneNumber += 1;
-  //   return currentStonePartLetter + orStoneNumber;
-  // };
-
-  // const addStone = () => {
-  //   const lastStoneId = stones[stones.length - 1].id;
-  //   const newId = nextStonePart(lastStoneId);
-  //   if (newId <= "D") {
-  //     setStones([...stones, { id: newId, visible: true }]);
-  //   } else {
-  //     toast.error("Only A, B, C and D stones are allowed.");
-  //   }
-  // };
-
-  // const addStoneProgram = () => {
-  //   const lastStoneId = stones[stones.length - 1].id;
-  //   const newId = nextStonePart(lastStoneId);
-  //   if (newId <= "D") {
-  //     setStones([...stones, { id: newId, visible: true }]);
-  //   } else {
-  //     toast.error("Only A, B, C, and D stones are allowed.");
-  //   }
-  // };
-
-  // const handleAddOrStone = (id) => {
-  //   const newId = addOrStone(id);
-  //   setStones([...stones, { id: newId, visible: true }]);
-  // };
-
-  // const handleAddOrModel = () => {
-  //   nextModel();
-  //   const newStones = stones.map((stone) => ({
-  //     ...stone,
-  //     id: `${stone.id}_${currentModel}`,
-  //   }));
-  //   setStones([...stones, ...newStones]);
-  // };
-
   // const toggleVisibility = (id) => {
   //   setStones(
   //     stones.map((stone) =>
@@ -86,97 +51,93 @@ function AddCrystalForm({ lotName }) {
   //     )
   //   );
   // };
-
   const addAction = async (event) => {
     event.preventDefault();
     const formData = new FormData(event.target);
 
     const letters = ["A", "B", "C", "D"];
-
-    const optionsDataPromises = stones.flatMap((stone) => {
-      return options.flatMap((option, index) => {
-        return letters.map(async (letter) => {
-          const estWeight = formData.get(`estWeight.${letter}.${index}`);
-          const notes = formData.get(`notes.${letter}.${index}`);
-
-          const estPlusMinusRColor =
-            formData.get(`estPlusMinusRColor.${letter}`) === "" &&
-            !formData.has(`estPlusMinusRColor.${letter}`) &&
-            (formData.get(`estColor.${letter}`) === "" ||
-              !formData.has(`estColor.${letter}`))
-              ? formData.get("plusMinusRColor")
-              : formData.get(`estPlusMinusRColor.${letter}`);
-
-          const estPlusMinusRClarity =
-            (formData.get(`estPlusMinusRClarity.${letter}`) === "" ||
-              !formData.has(`estPlusMinusRClarity.${letter}`)) &&
-            (formData.get(`estClarity.${letter}`) === "" ||
-              !formData.has(`estClarity.${letter}`))
-              ? formData.get("plusMinusRClarity")
-              : formData.get(`estPlusMinusRClarity.${letter}`);
-
-          const estColor =
-            formData.get(`estColor.${letter}`) === ""
-              ? formData.get("roughColor")
-              : formData.get(`estColor.${letter}`);
-          const estClarity =
-            formData.get(`estClarity.${letter}`) === ""
-              ? //  ||   !formData.has(!`estClarity.${letter}`)
-                formData.get("roughClarity")
-              : formData.get(`estClarity.${letter}`);
-
-          if (estWeight) {
-            try {
-              const program = options.find(
-                (opt) =>
-                  opt.program === formData.get(`estProgram.${letter}.${index}`)
-              );
-              const estShape = program ? program.estShape : null;
-              const estProgram = program ? program.program : null;
-              const company = program ? program.company : null;
-              const isPublic = company === "KW" ? true : false;
-              console.log(
-                `shape is ${estShape} program is ${estProgram} est weight is ${estWeight}
-                  est color is ${estColor} est clarity is ${estClarity} `
-              );
-              const listPrice = await getRap(
-                estShape,
-                estWeight,
-                estColor,
-                estClarity
-              );
-
-              return {
-                ABC: letter,
-                optionNumber: index + 1,
-                program: estProgram,
-                estShape,
-                estWeight,
-                estColor,
-                estClarity,
-                notes,
-                listPrice,
-                estPlusMinusRColor,
-                estPlusMinusRClarity,
-                company,
-                isPublic,
-              };
-            } catch (error) {
-              console.error("Error fetching price data:", error);
-              return null;
-            }
-          }
+  
+    // Collect all option data for each stone
+    const optionsDataPromises = optionArray.flatMap((stone, stoneIndex) => {
+      return letters.map(async (letter) => {
+        // Log start of each iteration
+        console.log(`Starting Processing for Stone: ${stoneIndex}, Letter: ${letter}`);
+        
+        const estWeight = formData.get(`estWeight.${letter}.${stoneIndex}`);
+        const notes = formData.get(`notes.${letter}.${stoneIndex}`);
+  
+        // If no estWeight, skip
+        if (!estWeight) {
+          console.log(`Skipping because estWeight is empty for Stone: ${stoneIndex}, Letter: ${letter}`);
           return null;
-        });
+        }
+  
+        try {
+          const programName = formData.get(`estProgram.${letter}.${stoneIndex}`);
+          const program = optionArray.find((opt) => opt.program === programName);
+  
+          if (!program) {
+            console.warn(`Program not found: ${programName}`);
+            return null;
+          }
+  
+          const estShape = program.estShape || '';
+          const estProgram = program.program || '';
+          const company = program.company || '';
+          const isPublic = company === "KW" ? true : false;
+  
+          // Log fetched values
+          console.log(`Fetched Values for Stone: ${stoneIndex}, Letter: ${letter}`, {
+            estShape,
+            estProgram,
+            company,
+            isPublic
+          });
+  
+          // Extract remaining form values
+          const estColor = formData.get(`estColor.${letter}`) || formData.get("roughColor");
+          const estClarity = formData.get(`estClarity.${letter}`) || formData.get("roughClarity");
+          const estPlusMinusRColor = formData.get(`estPlusMinusRColor.${letter}`) || formData.get("plusMinusRColor");
+          const estPlusMinusRClarity = formData.get(`estPlusMinusRClarity.${letter}`) || formData.get("plusMinusRClarity");
+  
+          // Fetch list price
+          const listPrice = await getRap(estShape, estWeight, estColor, estClarity);
+  
+          // Log list price
+          console.log(`Fetched List Price for Stone: ${stoneIndex}, Letter: ${letter}: ${listPrice}`);
+  
+          // Return option data
+          return {
+            ABC: letter,
+            optionNumber: stoneIndex + 1,
+            program: estProgram,
+            estShape,
+            estWeight,
+            estColor,
+            estClarity,
+            notes,
+            listPrice,
+            estPlusMinusRColor,
+            estPlusMinusRClarity,
+            company,
+            isPublic,
+          };
+        } catch (error) {
+          console.error("Error fetching price data:", error);
+          return null;
+        }
       });
     });
-
-    const optionsData = (await Promise.all(optionsDataPromises)).filter(
-      Boolean
-    );
-
+  
+    // Await promises and log results
+    const optionsData = (await Promise.all(optionsDataPromises)).flat().filter(Boolean);
+  
+    // Log the final optionsData array
+    console.log("Final Options Data:", optionsData);
+  
+    // Add to formData and submit
     formData.append("optionsData", JSON.stringify(optionsData));
-
+  
     const { data, error } = await addCrystal(formData, lotName);
     if (error) {
       toast.error(error);
@@ -185,7 +146,7 @@ function AddCrystalForm({ lotName }) {
       formRef.current?.reset();
     }
   };
-
+  
   return (
     <section className="bg-blue-50">
       <div className="container m-auto max-w-2xl py-24">
@@ -315,9 +276,6 @@ function AddCrystalForm({ lotName }) {
               </select>
             </div>
             <div className="mb-4 flex flex-wrap items-center space-y-4 sm:space-y-0 sm:space-x-4">
-              {/* <label className="block text-gray-700 font-bold mb-2 sm:mb-0 sm:w-auto w-full">
-               Notes
-              </label> */}
               <textarea
                 type="text"
                 id="description"
@@ -431,70 +389,17 @@ function AddCrystalForm({ lotName }) {
                     </button> */}
                 {/* </div> */}
 
-                <div className="space-y-2">
-                  {options.map((option, index) => (
-                    <div key={index}>
-                      <div className="border-b-2 border-black text-0xl text-center">
-                        <span className="bg-transparent px-5">
-                          {/* # {index + 1} */}
-                        </span>
-                      </div>
-                      {["A", "B", "C", "D"].map((letter) => (
-                        <div
-                          key={`${option.program}-${letter}-${index}`}
-                          className={`flex flex-wrap items-center space-x-2 sm:space-x-4 ${
-                            letter !== "A" &&
-                            !visibleStones[`${letter}-${index}`]
-                              ? "hidden"
-                              : ""
-                          }`}
-                        >
-                          <label className="">{letter}</label>
-
-                          <select
-                            name={`estProgram.${letter}.${index}`}
-                            className="border rounded py-1 px-2 w-full sm:w-auto sm:min-w-[100px]"
-                            defaultValue={option.program}
-                          >
-                            {options.map((opt) => (
-                              <option key={opt.program} value={opt.program}>
-                                {opt.program}
-                              </option>
-                            ))}
-                          </select>
-
-                          <input
-                            type="number"
-                            step="0.01"
-                            id={`estWeight.${letter}.${index}`}
-                            name={`estWeight.${letter}.${index}`}
-                            className="border rounded py-1 px-2 w-full sm:w-[100px]"
-                            placeholder="Carats"
-                            maxLength={10} // To ensure that it only allows up to 10 characters
-                          />
-
-                          <textarea
-                            id={`notes.${letter}.${index}`}
-                            name={`notes.${letter}.${index}`}
-                            className="block w-full p-1 border border-gray-300 rounded-md sm:w-auto sm:min-w-[200px]"
-                            rows={1}
-                            placeholder="Notes"
-                          />
-
-                          {letter !== "D" && (
-                            <button
-                              type="button"
-                              onClick={() =>
-                                unhideStone(nextStonePart(letter), index)
-                              }
-                              className="bg-transparent text-red-500 px-3 py-2 rounded"
-                            >
-                              +{nextStonePart(letter)}
-                            </button>
-                          )}
-                        </div>
-                      ))}
-                    </div>
+                <div>
+                  {optionArray.map((option, index) => (
+                    <OptionOnAddCrystalForm
+                      key={index}
+                      option={option}
+                      index={index}
+                      options={options}
+                      visibleStones={visibleStones}
+                      unhideStone={unhideStone}
+                      nextStonePart={nextStonePart}
+                    />
                   ))}
                 </div>
               </div>
