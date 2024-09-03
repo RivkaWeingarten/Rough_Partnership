@@ -11,7 +11,7 @@ import EditOptionForm from "@/components/EditOptionForm";
 import getRap from "@/app/actions/getRap";
 import { totalPriceWithDiscount } from "@/lib/utils";
 import optionsProgram from "@/roughOptionsPrograms.json";
-import { list } from "postcss";
+
 
 const OptionCard = ({
   optionNumber,

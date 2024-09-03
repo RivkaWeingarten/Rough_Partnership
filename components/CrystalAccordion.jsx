@@ -3,10 +3,10 @@ import { useState } from "react";
 import OptionsSelector from "./OptionsSelector";
 import RoughStatus from "./RoughStatus";
 
-const CrystalAccordion = ({ resourceNumber }) => {
+const CrystalAccordion = ({ resourceNumber,lot }) => {
   const [isOpen, setIsOpen] = useState(false);
 
-
+ 
   return (
     <div className="w-full border-b border-gray-200 mb-1">
       <div className="w-full bg-gray-100 rounded-xl shadow-md">
@@ -38,7 +38,15 @@ const CrystalAccordion = ({ resourceNumber }) => {
           
             <RoughStatus options={resourceNumber.options} diamonds={resourceNumber.diamonds} />
             <span className="text-xl md:self-center">{isOpen ? "−" : "+"}</span>
+
+            <a href={`/lots/${lot}/edit-crystal/${resourceNumber.resourceNumber}`}>
+                    ✏️    
+                   
+            </a>
           </div>
+
+ 
+                    
     
         </button>
         {isOpen && (

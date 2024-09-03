@@ -36,10 +36,11 @@ async function InfoBoxes() {
                     backgroundColor: "bg-purple-400",
                   }}
                 >
+                 
                   Value: {formatNumberCommas(lot.totalPrice)} {""}
                   Total List: {formatNumberCommas(lot.totalTtlList)}
-                 {''} {formatNumberCommas(100 - (lot.totalPrice / lot.totalTtlList) * 100)}%
-                  {/* Cost: {formatNumberCommas(lot.totalCost)} */}
+                 {''} {(100 - (lot.totalPrice / lot.totalTtlList) * 100)}% 
+                  {/* {/* Cost: {formatNumberCommas(lot.totalCost)} */}
                 </InfoBox>
               </div>
             ))

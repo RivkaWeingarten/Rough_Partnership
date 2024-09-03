@@ -35,6 +35,7 @@ const LotDetail = async ({ params }) => {
                 <CrystalAccordion
                   key={resourceNumber.id}
                   resourceNumber={resourceNumber}
+                  lot={id}
                 />
               ))}
             </div>

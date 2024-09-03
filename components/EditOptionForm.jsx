@@ -11,9 +11,7 @@ const EditOptionForm = ({ option, onClose, onSubmit }) => {
     });
   };
 
-  
-
-  const handleSubmit = (e) => {
+    const handleSubmit = (e) => {
     e.preventDefault();
     onSubmit(formValues); // Pass updated option values back to parent
     onClose(); // Close the popup

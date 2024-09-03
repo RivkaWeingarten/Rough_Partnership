@@ -38,6 +38,9 @@ model Lot {
   updatedAt   DateTime @updatedAt
   origin      String
   notes       String?
+  description String?
+  boxNumber   String?
+  cost Float @default(0)
   rough       Rough  []
 }
   
