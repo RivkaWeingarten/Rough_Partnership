@@ -32,6 +32,9 @@ async function HomePage() {
           <div>
             <Hero />
             <InfoBoxes/>
+            <a href="/addLot"
+            className="bg-purple-600 text-white font-semibold py-2 px-4 rounded hover:bg-purple-700 transition">Create a New Lot
+            </a>
           </div>
         )}
       </SignedIn>

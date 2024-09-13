@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import getResourceNumbers from "@/app/actions/getResourceNumbers";
 import { formatNumberCommas } from "@/lib/utils";
+import LotStats from "@/components/LotStats";
 
 const LotDiamondsDetail = async ({ params }) => {
   const { id } = params;
@@ -43,12 +44,14 @@ const LotDiamondsDetail = async ({ params }) => {
             <p>No diamonds in lot {id}</p>
           ) : (
             <>
-              <h2 className="text-2xl font-bold mb-4">
+              {/* <h2 className="text-2xl font-bold mb-4">
                 Lot {id} Value: ${formatNumberCommas(totalEstPrice)}
                  {" "} List: ${formatNumberCommas(totalList)}
                  {" "} {formatNumberCommas(100-(totalEstPrice/totalList)*100)}%
 
-              </h2>
+              </h2> */}
+
+<LotStats lot={id} />
               <table className="table-auto w-full">
                 <thead>
                   <tr>

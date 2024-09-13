@@ -1,169 +1,187 @@
+"use client";
+import { useState, useRef } from "react";
+import OptionOnAddCrystalForm from "./OptionOnAddCrystalForm";
+import updateCrystal from "@/app/actions/updateCrystal";
+import options from "@/roughOptionsPrograms.json";
+import { toast } from "react-toastify";
+import  getRap  from "@/app/actions/getRap";
 
-'use client'
-import {useState, useRef} from 'react'
-import OptionOnAddCrystalForm from './OptionOnAddCrystalForm'
+import { formatNumberCommas, totalEstPrice } from "@/lib/utils";
+import OptionsSelector from "./OptionsSelector";
 
-function EditCrystalForm({resourceData}) {
-  // return (
-  //   <div>EditCrystalForm {resourceData.roughWeight} </div>
-  // )
+function EditCrystalForm({ resourceData }) {
+  const formRef = useRef(null);
+  const maxOptionNumber =
+    resourceData.options.length > 0
+      ? Math.max(...resourceData.options.map((option) => option.optionNumber))
+      : 0;
 
-    // const formRef = useRef(null);
-    // const [stones, setStones] = useState([{ id: "A", visible: true }]);
-    // const [currentModel, setCurrentModel] = useState(1);
-    const [visibleStones, setVisibleStones] = useState({});
-    // const [optionArray, setOptionArray] = useState([...options]);
-    const unhideStone = (letter, index) => {
-      setVisibleStones((prev) => ({
-        ...prev,
-        [`${letter}-${index}`]: true,
-      }));
+  const [optionGroupNumber, setOptionGroupNumber] = useState(
+    resourceData.options.length === 0 ? 0 : maxOptionNumber + 1
+  );
+  const [stones, setStones] = useState([{ id: "A", visible: true }]);
+  // const [currentModel, setCurrentModel] = useState(1);
+  const [visibleStones, setVisibleStones] = useState({});
+  const [optionArray, setOptionArray] = useState(
+    resourceData.options.length === 0 ? [...options] : [...resourceData.options]
+  );
+  const unhideStone = (letter, index) => {
+    setVisibleStones((prev) => ({
+      ...prev,
+      [`${letter}-${index}`]: true,
+    }));
+  };
+
+  // AddNewOption function
+  const addNewOption = () => {
+    const newOption = {
+      program: "",
+      estShape: "",
+      company: "",
     };
-  
-    // // AddNewOption function
-    // const addNewOption = () => {
-    //   const newOption = {
-    //     program: "",
-    //     estShape: "",
-    //     company: "",
-    //   };
-  
-    //   setOptionArray([...optionArray, newOption]); // Use setState to add a new option
-    //   setStones([...stones, { id: "A", visible: true }]); // Add a new stone option
-    // };
-  
-    // const nextModel = () => {
-    //   setCurrentModel((prevModel) => prevModel + 1);
-    // };
-  
-    const nextStonePart = (currentStonePart) => {
-      let currentStonePartLetter = currentStonePart[0];
-      if (currentStonePartLetter === "A") return "B";
-      if (currentStonePartLetter === "B") return "C";
-      if (currentStonePartLetter === "C") return "D";
-      return "Only ABCD stones allowed";
-    };
-  
-    // // const toggleVisibility = (id) => {
-    // //   setStones(
-    // //     stones.map((stone) =>
-    // //       letter === id ? { ...stone, visible: !stone.visible } : stone
-    // //     )
-    // //   );
-    // // };
-    // const addAction = async (event) => {
-    //   event.preventDefault();
-    //   const formData = new FormData(event.target);
-  
-    //   const letters = ["A", "B", "C", "D"];
+
+
+    setOptionArray([...optionArray, newOption]);
+    setStones([...stones, { id: "A", visible: true }]);
+    setOptionGroupNumber(optionGroupNumber + 1);
+  };
+
+
+  const nextStonePart = (currentStonePart) => {
+    let currentStonePartLetter = currentStonePart[0];
+    if (currentStonePartLetter === "A") return "B";
+    if (currentStonePartLetter === "B") return "C";
+    if (currentStonePartLetter === "C") return "D";
+    return "Only ABCD stones allowed";
+  };
+
+  // // const toggleVisibility = (id) => {
+  // //   setStones(
+  // //     stones.map((stone) =>
+  // //       letter === id ? { ...stone, visible: !stone.visible } : stone
+  // //     )
+  // //   );
+  // // };
+  const addAction = async (event) => {
+    event.preventDefault();
+    const formData = new FormData(event.target);
+
+    const letters = ["A", "B", "C", "D"];
+
+    // Collect all option data for each stone
+    const optionsDataPromises = optionArray.flatMap((stone, stoneIndex) => {
+      return letters.map(async (letter) => {
+        // Log start of each iteration
+        console.log(`Starting Processing for Stone: ${stoneIndex}, Letter: ${letter}`);
+
+        const estWeight = formData.get(`estWeight.${letter}.${stoneIndex}`);
+        const notes = formData.get(`notes.${letter}.${stoneIndex}`);
+
+        // If no estWeight, skip
+        if (!estWeight) {
+          console.log(`Skipping because estWeight is empty for Stone: ${stoneIndex}, Letter: ${letter}`);
+          return null;
+        }
+
+        try {
+          const programName = formData.get(`estProgram.${letter}.${stoneIndex}`);
+          const program = options.find((opt) => opt.program === programName);
+
+          if (!program) {
+            console.warn(`Program not found: ${programName}`);
+            return null;
+          }
+
+          const estShape = program.estShape || '';
+          const estProgram = program.program || '';
+          const company = program.company || '';
+          const isPublic = company === "KW" ? true : false;
+
+          // Log fetched values
+          console.log(`Fetched Values for Stone: ${stoneIndex}, Letter: ${letter}`, {
+            estShape,
+            estProgram,
+            company,
+            isPublic
+          });
+
+          // Extract remaining form values
+          const estColor = formData.get(`estColor.${letter}`) || formData.get("roughColor");
+          const estClarity = formData.get(`estClarity.${letter}`) || formData.get("roughClarity");
+          const estPlusMinusRColor = formData.get(`estPlusMinusRColor.${letter}`) || formData.get("plusMinusRColor");
+          const estPlusMinusRClarity = formData.get(`estPlusMinusRClarity.${letter}`) || formData.get("plusMinusRClarity");
+
+          // Fetch list price
+          const listPrice = await getRap(estShape, estWeight, estColor, estClarity);
+
+          // Log list price
+          console.log(`Fetched List Price for Stone: ${stoneIndex}, Letter: ${letter}: ${listPrice}`);
+
+          // Return option data
+          return {
+            resourceNumber: resourceData.resourceNumber,
+            ABC: letter,
+            optionNumber: stoneIndex + 1,
+            program: estProgram,
+            estShape,
+            estWeight,
+            estColor,
+            estClarity,
+            notes,
+            listPrice,
+            estPlusMinusRColor,
+            estPlusMinusRClarity,
+            company,
+            isPublic,
+          };
+        } catch (error) {
+          console.error("Error fetching price data:", error);
+          return null;
+        }
+      });
+    });
+
+    // Await promises and log results
+    const optionsData = (await Promise.all(optionsDataPromises)).flat().filter(Boolean);
+
+    // Log the final optionsData array
+    console.log("Final Options Data:", optionsData);
+
+    // Add to formData and submit
+    formData.append("optionsData", JSON.stringify(optionsData));
+    console.log("Final FormData:", formData);
+    const { data, error } = await updateCrystal(formData, resourceData.resourceNumber);;
     
-    //   // Collect all option data for each stone
-    //   const optionsDataPromises = optionArray.flatMap((stone, stoneIndex) => {
-    //     return letters.map(async (letter) => {
-    //       // Log start of each iteration
-    //       console.log(`Starting Processing for Stone: ${stoneIndex}, Letter: ${letter}`);
-          
-    //       const estWeight = formData.get(`estWeight.${letter}.${stoneIndex}`);
-    //       const notes = formData.get(`notes.${letter}.${stoneIndex}`);
-    
-    //       // If no estWeight, skip
-    //       if (!estWeight) {
-    //         console.log(`Skipping because estWeight is empty for Stone: ${stoneIndex}, Letter: ${letter}`);
-    //         return null;
-    //       }
-    
-    //       try {
-    //         const programName = formData.get(`estProgram.${letter}.${stoneIndex}`);
-    //         const program = optionArray.find((opt) => opt.program === programName);
-    
-    //         if (!program) {
-    //           console.warn(`Program not found: ${programName}`);
-    //           return null;
-    //         }
-    
-    //         const estShape = program.estShape || '';
-    //         const estProgram = program.program || '';
-    //         const company = program.company || '';
-    //         const isPublic = company === "KW" ? true : false;
-    
-    //         // Log fetched values
-    //         console.log(`Fetched Values for Stone: ${stoneIndex}, Letter: ${letter}`, {
-    //           estShape,
-    //           estProgram,
-    //           company,
-    //           isPublic
-    //         });
-    
-    //         // Extract remaining form values
-    //         const estColor = formData.get(`estColor.${letter}`) || formData.get("roughColor");
-    //         const estClarity = formData.get(`estClarity.${letter}`) || formData.get("roughClarity");
-    //         const estPlusMinusRColor = formData.get(`estPlusMinusRColor.${letter}`) || formData.get("plusMinusRColor");
-    //         const estPlusMinusRClarity = formData.get(`estPlusMinusRClarity.${letter}`) || formData.get("plusMinusRClarity");
-    
-    //         // Fetch list price
-    //         const listPrice = await getRap(estShape, estWeight, estColor, estClarity);
-    
-    //         // Log list price
-    //         console.log(`Fetched List Price for Stone: ${stoneIndex}, Letter: ${letter}: ${listPrice}`);
-    
-    //         // Return option data
-    //         return {
-    //           ABC: letter,
-    //           optionNumber: stoneIndex + 1,
-    //           program: estProgram,
-    //           estShape,
-    //           estWeight,
-    //           estColor,
-    //           estClarity,
-    //           notes,
-    //           listPrice,
-    //           estPlusMinusRColor,
-    //           estPlusMinusRClarity,
-    //           company,
-    //           isPublic,
-    //         };
-    //       } catch (error) {
-    //         console.error("Error fetching price data:", error);
-    //         return null;
-    //       }
-    //     });
-    //   });
-    
-    //   // Await promises and log results
-    //   const optionsData = (await Promise.all(optionsDataPromises)).flat().filter(Boolean);
-    
-    //   // Log the final optionsData array
-    //   console.log("Final Options Data:", optionsData);
-    
-    //   // Add to formData and submit
-    //   formData.append("optionsData", JSON.stringify(optionsData));
-    
-    //   const { data, error } = await addCrystal(formData, lotName);
-    //   if (error) {
-    //     toast.error(error);
-    //   } else {
-    //     toast.success(`Added resource number: ${data.resourceNumber}`);
-    //     formRef.current?.reset();
-    //   }
-    // };
-    function addAction(event) {
-      event.preventDefault();
-      const formData = new FormData(event.target);
-      console.log(formData)
+    if (error) {
+      toast.error(error);
+    } else {
+      toast.success(`Updated resource number: ${data.resourceNumber}`);
+      formRef.current?.reset();
     }
-    const optionArray = resourceData.options
-    
-    return (
+  };
+  // function addAction(event) {
+  //   event.preventDefault();
+  //   const formData = new FormData(event.target);
+  //   console.log(formData.get("roughWeight"));
+  // }
+
+  return (
+    <>
       <section className="bg-blue-50">
+      <a
+            href={`/lots/${resourceData.lotNumber}`}
+            className="bg-purple-600 text-white font-semibold py-2 px-4 rounded hover:bg-purple-700 transition"
+          >
+            Go to Lot {resourceData.lotNumber}
+          </a>
         <div className="container m-auto max-w-2xl py-24">
           <div className="bg-white px-6 py-8 mb-4 shadow-md rounded-md border m-4 md:m-0">
             {/* <form ref={formRef} onSubmit={addAction}> */}
-            <form  onSubmit={addAction}>
+            <form onSubmit={addAction} ref={formRef}>
               <h2 className="text-3xl text-center font-semibold mb-6">
-               edit # {resourceData.resourceNumber}
+                Editing # {resourceData.resourceNumber}
               </h2>
               <div className="mb-4 flex flex-wrap items-center space-y-4 sm:space-y-0 sm:space-x-4">
-          
                 <label className="block text-gray-700 font-bold mb-2 sm:mb-0 sm:w-auto w-full">
                   Rough Weight
                 </label>
@@ -171,7 +189,7 @@ function EditCrystalForm({resourceData}) {
                   type="text"
                   id="roughWeight"
                   name="roughWeight"
-                  value={resourceData.roughWeight}
+                  defaultValue={resourceData.roughWeight}
                   className="border rounded w-full sm:w-24 py-2 px-3"
                   placeholder="enter Rough carats"
                 />
@@ -183,7 +201,7 @@ function EditCrystalForm({resourceData}) {
                 <select
                   id="roughColor"
                   name="roughColor"
-                  value={resourceData.roughColor}
+                  defaultValue={resourceData.roughColor}
                   className="border rounded w-full sm:w-20 py-2 px-3"
                   required
                 >
@@ -197,19 +215,19 @@ function EditCrystalForm({resourceData}) {
                   <option value="K">K</option>
                   <option value="L">L</option>
                 </select>
-  
+
                 <select
                   id="plusMinusRColor"
                   name="plusMinusRColor"
                   className="border rounded w-full sm:w-20 py-2 px-3"
                   placeholder="+-"
-                  value={resourceData.plusMinusRColor}
+                  defaultValue={resourceData.plusMinusRColor}
                 >
                   <option value=""></option>
                   <option value="+">+</option>
                   <option value="-">-</option>
                 </select>
-  
+
                 <label className="block text-gray-700 font-bold mb-1 sm:mb-0 sm:w-auto w-full">
                   ZL Clarity
                 </label>
@@ -217,7 +235,7 @@ function EditCrystalForm({resourceData}) {
                   id="roughClarity"
                   name="roughClarity"
                   className="border rounded w-full sm:w-20 py-2 px-3"
-                  value={resourceData.roughClarity}
+                  defaultValue={resourceData.roughClarity}
                   required
                 >
                   <option value="IF">IF</option>
@@ -230,12 +248,12 @@ function EditCrystalForm({resourceData}) {
                   <option value="I1">I1</option>
                   <option value="I2">I2</option>
                 </select>
-  
+
                 <select
                   id="plusMinusRClarity"
                   name="plusMinusRClarity"
                   className="border rounded w-full sm:w-20 py-2 px-3"
-                  value={resourceData.plusMinusRClarity}  
+                  defaultValue={resourceData.plusMinusRClarity}
                   placeholder="+-"
                 >
                   <option value=""></option>
@@ -247,14 +265,15 @@ function EditCrystalForm({resourceData}) {
                 <label className="block text-gray-700 font-bold mb-2 sm:mb-0 sm:w-auto w-full">
                   Machine Color
                 </label>
-  
+
                 <input
                   type="text"
                   id="machineColor"
                   name="machineColor"
                   className="border rounded w-full sm:w-24 py-2 px-3"
+                  defaultValue={resourceData.machineColor}
                 />
-  
+
                 <label
                   htmlFor="type"
                   className="block text-gray-700 font-bold mb-2 sm:mb-0 sm:w-auto w-full"
@@ -265,7 +284,7 @@ function EditCrystalForm({resourceData}) {
                   id="fluor"
                   name="fluor"
                   className="border rounded w-full sm:w-48 py-2 px-3"
-                  value={resourceData.fluor}
+                  defaultValue={resourceData.fluor}
                   required
                 >
                   <option value="None">None</option>
@@ -286,26 +305,18 @@ function EditCrystalForm({resourceData}) {
                   placeholder="Notes"
                   rows={1}
                   className="border rounded w-full sm:w-30 py-2 px-3"
-                  value={resourceData.roughDescription}
+                  defaultValue={resourceData.roughDescription}
                 />
               </div>
-  
+
               <div className="mb-4">
                 <span className="text-sm text-grey-500">
                   (Will inherit if left Blank) {"  "}
                 </span>
                 {["A", "B", "C", "D"].map((stone) => (
+                  
                   <div>
-                    {/* <h3 className="font-semibold">
-                      Stone {stone}{" "} */}
-                    {/* <button
-                    type="button"
-                    onClick={() => toggleVisibility(stone)}
-                    className="text-sm text-blue-500"
-                  >
-                    [{stone.visible ? "Hide" : "Show"} Options]
-                  </button> */}
-                    {/* </h3>{" "} */}
+                
                     <div className="mb-4 flex flex-wrap items-center space-y-4 sm:space-y-0 sm:space-x-4">
                       <label className="block text-gray-700 font-bold mb-2 sm:mb-0 sm:w-auto w-full">
                         {stone} Color
@@ -314,6 +325,7 @@ function EditCrystalForm({resourceData}) {
                         id={`estColor.${stone}`}
                         name={`estColor.${stone}`}
                         className="border rounded w-full sm:w-20 py-2 px-3"
+                       
                       >
                         <option value=""></option>
                         <option value="D">D</option>
@@ -326,7 +338,7 @@ function EditCrystalForm({resourceData}) {
                         <option value="K">K</option>
                         <option value="L">L</option>
                       </select>
-  
+
                       <select
                         id={`estPlusMinusRColor.${stone}`}
                         name={`estPlusMinusRColor.${stone}`}
@@ -337,7 +349,7 @@ function EditCrystalForm({resourceData}) {
                         <option value="+">+</option>
                         <option value="-">-</option>
                       </select>
-  
+
                       <label className="block text-gray-700 font-bold mb-1 sm:mb-0 sm:w-auto w-full">
                         Clarity
                       </label>
@@ -357,7 +369,7 @@ function EditCrystalForm({resourceData}) {
                         <option value="I1">I1</option>
                         <option value="I2">I2</option>
                       </select>
-  
+
                       <select
                         id="estPlusMinusRClarity"
                         name="estPlusMinusRClarity"
@@ -371,68 +383,55 @@ function EditCrystalForm({resourceData}) {
                     </div>
                   </div>
                 ))}
-                {/* {["A", "B", "C", "D"].map((stone) => ( */}
+        
                 <div className="mb-4 bg-blue-50 p-4">
-                  {/* <div className="flex justify-between items-center mb-2">
-                      <h3 className="font-semibold">
-                        Stone {stone}{" "}
-                        <button
-                          type="button"
-                          onClick={() => toggleVisibility(stone.id)}
-                          className="text-sm text-blue-500"
-                        >
-                          [{stone.visible ? "Hide" : "Show"} Options]
-                        </button>
-                      </h3>
-                      {/* <button
-                        type="button"
-                        onClick={() => handleAddOrStone(stone.id)}
-                        className="text-sm text-green-500"
-                      >
-                        OR
-                      </button> */}
-                  {/* </div> */}
-  
+             
                   <div>
-                    {optionArray.map((option, index) => (
-                      <OptionOnAddCrystalForm
-                        key={index}
-                        option={option}
-                        index={index}
-                        options={resourceData.options}
-                        visibleStones={visibleStones}
-                        unhideStone={unhideStone}
-                        nextStonePart={nextStonePart}
-                      />
-                    ))}
+                    {resourceData.options.length === 0 ? (
+                      optionArray.map((option, index) => (
+                        <OptionOnAddCrystalForm
+                          key={index}
+                          option={option}
+                          index={index}
+                          options={options}
+                          visibleStones={visibleStones}
+                          unhideStone={unhideStone}
+                          nextStonePart={nextStonePart}
+                        />
+                      ))
+                    ) : (
+                      <>
+                        <p>You can edit existing options below</p>
+                        {optionArray.slice(maxOptionNumber + 1).map((_, i) => (
+                          <OptionOnAddCrystalForm
+                            key={maxOptionNumber + i}
+                            option={
+                              {
+                                /* Pass any default or empty values needed for the new option */
+                              }
+                            }
+                            index={maxOptionNumber + i}
+                            options={options}
+                            visibleStones={visibleStones}
+                            unhideStone={unhideStone}
+                            nextStonePart={nextStonePart}
+                          />
+                        ))}
+                      </>
+                    )}
                   </div>
                 </div>
               </div>
-  
+
               <button
                 type="button"
-                // onClick={addNewOption}
+                onClick={addNewOption}
                 className="mt-4 py-2 px-4 bg-green-500 text-white  rounded"
               >
                 Add Another Option
               </button>
-              {/* <div className="flex justify-between">
-                <button
-                  type="button"
-                  onClick={addStone}
-                  className="bg-purple-500 text-white px-4 py-2 rounded"
-                >
-                  Add Stone Part
-                </button>
-                <button
-                  type="button"
-                  onClick={handleAddOrModel}
-                  className="bg-green-500 text-white px-4 py-2 rounded"
-                >
-                  Add Another OR Model
-                </button>
-              </div> */}
-  
+     
+
               <div className="text-center mt-6">
                 <button
                   type="submit"
@@ -445,8 +444,9 @@ function EditCrystalForm({resourceData}) {
           </div>
         </div>
       </section>
-    );
-  }
+      <OptionsSelector options={resourceData.options} />
+    </>
+  );
+}
 
-
-export default EditCrystalForm
+export default EditCrystalForm;

@@ -4,7 +4,7 @@ import { auth } from "@clerk/nextjs/server";
 
 function findRapSize(carats) {
   const ranges = [
-    { min: 0.18, max: 0.22, rapSize: 0.18 },
+    { min: 0.01, max: 0.22, rapSize: 0.18 },
     { min: 0.23, max: 0.29, rapSize: 0.23 },
     { min: 0.3, max: 0.39, rapSize: 0.3 },
     { min: 0.4, max: 0.49, rapSize: 0.4 },

@@ -3,6 +3,7 @@ import React from "react";
 import InfoBox from "./InfoBox";
 import getLots from "@/app/actions/getLots";
 import { formatNumberCommas } from "@/lib/utils";
+import LotStats from "./LotStats";
 
 async function InfoBoxes() {
   const { lots, error } = await getLots();
@@ -26,21 +27,21 @@ async function InfoBoxes() {
                     link: `/lots/${lot.lotName}`,
                     backgroundColor: "bg-black",
                   }}
-             
-                  buttonInfo2={{
-                    link: `/lots/${lot.lotName}/add-crystal`,
-                    backgroundColor: "bg-green-400",
-                  }}
+                  // buttonInfo2={{
+                  //   link: `/lots/${lot.lotName}/add-crystal`,
+                  //   backgroundColor: "bg-green-400",
+                  // }}
                   buttonInfo3={{
                     link: `/lots/${lot.lotName}/diamonds`,
                     backgroundColor: "bg-purple-400",
                   }}
                 >
-                 
-                  Value: {formatNumberCommas(lot.totalPrice)} {""}
+                  {/* Value: {formatNumberCommas(lot.totalPrice)} {""}
                   Total List: {formatNumberCommas(lot.totalTtlList)}
-                 {''} {(100 - (lot.totalPrice / lot.totalTtlList) * 100)}% 
-                  {/* {/* Cost: {formatNumberCommas(lot.totalCost)} */}
+                {'  '}{formatNumberCommas((100 - (lot.totalPrice / lot.totalTtlList) * 100))} % 
+                   Cost: {formatNumberCommas(lot.totalCost)} */}
+
+                  <LotStats lot={lot} />
                 </InfoBox>
               </div>
             ))

@@ -18,6 +18,8 @@ export const addLot = async (lotData) => {
             type: 'R',
             totalCts: parseFloat(lotData.totalCts),
             totalStones: parseInt(lotData.totalStones),
+            cost: parseFloat(lotData.cost),
+
                       }
     });
 
@@ -26,26 +28,7 @@ export const addLot = async (lotData) => {
     // Create rough crystals for each stone
     for (let i = 1; i <= totalStones; i++) {
         await db.rough.create({
-            // data: {
-            //   resourceNumber: `${lotName}-${i}`, // Format: lotName-stoneNumber
-            // //   lotId: newLot.id, // Associate the roughCrystal with the newly created lot
-            //   roughWeight: 0,
-            //   roughColor: '',
-            //   roughClarity: '',
-            //   machineColor: '',
-            //   plusMinusRColor: '',
-            //   plusMinusRClarity: '',
-            //   fluor: '',
-            //   roughDescription: '',
-            //   // Correct way to associate the rough record with the user
-            //   user: {
-            //     connect: { id: userId },
-            //   },
-            //   lot: {
-            //     connect: { lotName },
-            //   },
-           
-            // },
+       
 
             data: {
                 resourceNumber: `${lotName}-${i}`,

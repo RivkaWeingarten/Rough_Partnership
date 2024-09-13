@@ -51,6 +51,7 @@ import { addLot } from '@/app/actions/addLot.js';
               name="totalCts"
               className="border rounded w-full py-2 px-4"
               placeholder="Enter total rough carats"
+              step={0.01}
             />
           </div>
 

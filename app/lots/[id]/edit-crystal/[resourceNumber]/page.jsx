@@ -25,11 +25,12 @@ const EditCrystalPage = async ({ params }) => {
   
     return (
       <div>
+     
         <section className="px-4 py-6">
      
-           
+       
             <div className="grid grid-cols-1 gap-6">
-              <EditCrystalForm resourceData={resourceData} />
+           <EditCrystalForm resourceData={resourceData} />
             </div>
        
         </section>

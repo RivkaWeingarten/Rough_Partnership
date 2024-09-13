@@ -13,19 +13,19 @@ export default function InfoBox({
   return (
     <div className={`${backgroundColor} p-6 rounded-lg shadow-md`}>
       <h2 className={`${textColor} text-2xl font-bold`}>{heading}</h2>
-      <p className={`${textColor}mt-2 mb-4`}>{children}</p>
+      <div className={`${textColor}mt-2 mb-4`}>{children}</div>
       <a
         href={buttonInfo.link}
         className={`inline-block ${buttonInfo.backgroundColor} text-white rounded-lg px-4 py-2 hover:opacity-80`}
       >
         {buttonInfo.text || "Select Options"} 
       </a>
-      <a
+      {/* <a
         href={buttonInfo2.link}
         className={`inline-block ${buttonInfo2.backgroundColor} text-white rounded-lg px-4 py-2 hover:opacity-80`}
       >
         {buttonInfo.text || "Add Rough"}
-      </a>
+      </a> */}
       <a
         href={buttonInfo3.link}
         className={`inline-block ${buttonInfo3.backgroundColor} text-white rounded-lg px-4 py-2 hover:opacity-80`}

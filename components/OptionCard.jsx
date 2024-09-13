@@ -11,6 +11,7 @@ import EditOptionForm from "@/components/EditOptionForm";
 import getRap from "@/app/actions/getRap";
 import { totalPriceWithDiscount } from "@/lib/utils";
 import optionsProgram from "@/roughOptionsPrograms.json";
+import OptionsTableComponent from "@/components/OptionsTableComponent";
 
 
 const OptionCard = ({
@@ -294,7 +295,7 @@ const OptionCard = ({
           </span>
         </div>
 
-        <div className="flex flex-wrap">
+       <div className="flex flex-wrap">
           <div className="w-full p-1">
             <div className="bg-gray-100 p-2 rounded-lg shadow-sm text-xs">
               <table className="w-full text-left">
@@ -357,7 +358,8 @@ const OptionCard = ({
               </table>
             </div>
           </div>
-        </div>
+        </div> 
+        {/* {/* <OptionsTableComponent options={options}/> */}
       </div>
 
       {isEditPopupOpen && (
