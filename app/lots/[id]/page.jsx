@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import getResourceNumbers from '@/app/actions/getResourceNumbers';
 import CrystalAccordion from '@/components/CrystalAccordion';
-
+import LotStats from '@/components/LotStats';
 const LotDetail = async ({ params }) => {
   const { id } = params;
 
@@ -31,6 +31,7 @@ const LotDetail = async ({ params }) => {
             <p>No diamonds in lot {id}</p>
           ) : (
             <div className="grid grid-cols-1 gap-6">
+              <LotStats lot={id} />
               {resourceNumbers?.map((resourceNumber) => (
                 <CrystalAccordion
                   key={resourceNumber.id}

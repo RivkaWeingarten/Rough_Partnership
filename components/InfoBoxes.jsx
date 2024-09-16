@@ -41,7 +41,7 @@ async function InfoBoxes() {
                 {'  '}{formatNumberCommas((100 - (lot.totalPrice / lot.totalTtlList) * 100))} % 
                    Cost: {formatNumberCommas(lot.totalCost)} */}
 
-                  <LotStats lot={lot} />
+                  <LotStats lot={lot.lotName} />
                 </InfoBox>
               </div>
             ))

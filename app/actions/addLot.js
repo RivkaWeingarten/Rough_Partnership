@@ -26,7 +26,7 @@ export const addLot = async (lotData) => {
     const { lotName, totalStones } = newLot;
 
     // Create rough crystals for each stone
-    for (let i = 1; i <= totalStones; i++) {
+    for (let i = totalStones; i > 0; i--) {
         await db.rough.create({
        
 
