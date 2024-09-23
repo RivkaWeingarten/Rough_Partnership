@@ -76,13 +76,15 @@ const OptionCard = ({
        // Return the new public status to update the state
      
         return newIsPublic;
+
     
       });
 
-
+     
     } catch (error) {
       toast.error(`Error: ${error.message}`);
     }
+    setIsOptionMostValued(  () => isMostValued)
 
   };
 
@@ -273,7 +275,7 @@ const OptionCard = ({
           >
             {isOptionPublic ? "Make Private" : "Share"}
           </button>
-          {isMostValued && (
+          {isOptionMostValued && isOptionPublic && (
             <span className="text-green-500 text-sm font-bold">
               $ BEST VALUE
             </span>
