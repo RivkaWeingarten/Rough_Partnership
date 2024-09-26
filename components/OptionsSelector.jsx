@@ -5,6 +5,7 @@ import { totalPriceWithDiscount, formatNumberCommas } from "@/lib/utils";
 import changeOptionData from "@/app/actions/updateOption";
 import OptionCard from "@/components/OptionCard";
 import { toast } from "react-toastify";
+import getResourceNumbers from "@/app/actions/getResourceNumbers";
 
 const updateOptionInDatabase = async (optionId, updateData) => {
   try {
@@ -145,9 +146,19 @@ const OptionsSelector = ({ options }) => {
   const isOptionGroupSelected = isOptionNumberSelected();
 
   // Sorting function to sort groupedOptions based on total price
-  const sortOptions = () => {
+  const sortOptions =  () => {
+    getResourceNumbers(options[0].resourceNumber.split("-")[0])
+
     const sortedOptions = Object.entries(groupedOptions).sort(
       ([, optionsA], [, optionsB]) => {
+        const isPublicA = optionsA.some((option) => option.isPublic);
+        const isPublicB = optionsB.some((option) => option.isPublic);
+  
+        // First, sort by isPublic (true comes before false)
+        if (isPublicA && !isPublicB) return -1;
+        if (!isPublicA && isPublicB) return 1;
+  
+        // If both are the same in terms of isPublic, sort by total estimated price
         const totalEstPriceA = optionsA.reduce(
           (acc, option) => acc + option.estPrice,
           0
@@ -156,16 +167,17 @@ const OptionsSelector = ({ options }) => {
           (acc, option) => acc + option.estPrice,
           0
         );
-        return sortOrder === "desc"
-          ? totalEstPriceB - totalEstPriceA
-          : totalEstPriceA - totalEstPriceB;
+  
+        return totalEstPriceB - totalEstPriceA; // Descending order by price
       }
     );
-
+  
     return sortedOptions;
   };
-
+  
+  // Use sortedGroupedOptions in the component
   const sortedGroupedOptions = sortOptions();
+  
 
   const toggleSortOrder = () => {
     setSortOrder((prevOrder) => (prevOrder === "desc" ? "desc" : "desc"));
@@ -174,14 +186,15 @@ const OptionsSelector = ({ options }) => {
   return (
     <div>
       <button
-        onClick={toggleSortOrder}
+        // onClick={() => getResourceNumbers(options[0].resourceNumber.split("-")[0])}
+        onClick={() => sortOptions()  }
         className="bg-gray-200 p-2 rounded mb-4"
       >
         Sort {sortOrder === "desc" ? "Largest to Smallest" : "Smallest to Largest"}
       </button>
 
       <div className="flex flex-wrap -mx-2">
-        {sortedGroupedOptions.map(([optionNumber, groupedOptions], index) => {
+        { sortedGroupedOptions.map(([optionNumber, groupedOptions], index) => {
           const totalEstPrice = groupedOptions.reduce(
             (acc, option) => acc + option.estPrice,
             0
