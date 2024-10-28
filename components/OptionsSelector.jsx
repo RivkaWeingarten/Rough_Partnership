@@ -147,7 +147,7 @@ const OptionsSelector = ({ options }) => {
 
   // Sorting function to sort groupedOptions based on total price
   const sortOptions =  () => {
-    getResourceNumbers(options[0].resourceNumber.split("-")[0])
+    // getResourceNumbers(options[0].resourceNumber.split("-")[0])
 
     const sortedOptions = Object.entries(groupedOptions).sort(
       ([, optionsA], [, optionsB]) => {
