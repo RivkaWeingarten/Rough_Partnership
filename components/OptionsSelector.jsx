@@ -1,11 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { totalPriceWithDiscount, formatNumberCommas } from "@/lib/utils";
+import { useState } from "react";
+import { totalPriceWithDiscount } from "@/lib/utils";
 import changeOptionData from "@/app/actions/updateOption";
 import OptionCard from "@/components/OptionCard";
 import { toast } from "react-toastify";
-import getResourceNumbers from "@/app/actions/getResourceNumbers";
 
 const updateOptionInDatabase = async (optionId, updateData) => {
   try {
@@ -28,17 +27,20 @@ const updateOptionInDatabase = async (optionId, updateData) => {
 
 const OptionsSelector = ({ options }) => {
   const [activeOptionNumber, setActiveOptionNumber] = useState(null);
-  const [allOptions, setAllOptions] = useState(options);
-  const [sortOrder, setSortOrder] = useState("desc"); // Add sortOrder state
+  const [allOptions, setAllOptions] = useState([...options]);
 
   const groupedOptions = allOptions.reduce((acc, option) => {
     const optionNumber = option.optionNumber;
-    if (!acc[optionNumber]) {
-      acc[optionNumber] = [];
+    let groupIndex = acc.findIndex(group => group.optionNumber === optionNumber);
+
+    if (groupIndex === -1) {
+      acc.push({ optionNumber, options: [] });
+      groupIndex = acc.length - 1;
     }
-    acc[optionNumber].push(option);
+
+    acc[groupIndex].options.push(option);
     return acc;
-  }, {});
+  }, []);
 
   const handleOptionUpdate = (optionId, newData) => {
     const updatedOptions = allOptions.map((option) => {
@@ -79,123 +81,29 @@ const OptionsSelector = ({ options }) => {
     setAllOptions(updatedOptions);
   };
 
-  const isOptionNumberPublic = () => {
-    const publicOptionNumbers = new Set();
-    Object.entries(groupedOptions).forEach(([optionNumber, options]) => {
-      const isGroupPublic = options.some(
-        (option) => option.ABC === "A" && option.isPublic
-      );
-      if (isGroupPublic) {
-        publicOptionNumbers.add(optionNumber);
+  const sortOptions = () => {
+    const sortedOptions = [...allOptions].sort((a, b) => {
+      if (a.isPublic !== b.isPublic) {
+        return b.isPublic - a.isPublic; // Public options come first
       }
+      return b.estPrice - a.estPrice; // Descending by estPrice
     });
-    return publicOptionNumbers;
-  };
 
-  const isOptionGroupPublic = isOptionNumberPublic();
-
-  const calculateMostValuedOption = () => {
-    let mostValuedOptionNumber = null;
-    let highestValue = 0;
-    Object.entries(groupedOptions).forEach(([optionNumber, options]) => {
-      const totalEstPrice = options.reduce(
-        (acc, option) => acc + option.estPrice,
-        0
-      );
-      if (totalEstPrice > highestValue) {
-        highestValue = totalEstPrice;
-        mostValuedOptionNumber = optionNumber;
-      }
-    });
-    return mostValuedOptionNumber;
-  };
-
-  const mostValuedOptionNumber = calculateMostValuedOption();
-
-  const calculateMostValuedPublicOption = () => {
-    const publicOptionNumbers = isOptionNumberPublic();
-    let mostValuedOptionNumber = null;
-    let highestValue = 0;
-    Object.entries(groupedOptions).forEach(([optionNumber, options]) => {
-      if (publicOptionNumbers.has(optionNumber)) {
-        const totalEstPrice = options.reduce(
-          (acc, option) => acc + option.estPrice,
-          0
-        );
-        if (totalEstPrice > highestValue) {
-          highestValue = totalEstPrice;
-          mostValuedOptionNumber = optionNumber;
-        }
-      }
-    });
-    return mostValuedOptionNumber;
-  };
-
-  const mostValuedPublicOptionNumber = calculateMostValuedPublicOption();
-
-  const isOptionNumberSelected = () => {
-    let selectedOptionNumber = null;
-    Object.entries(groupedOptions).forEach(([optionNumber, options]) => {
-      if (options.every((option) => option.selected)) {
-        selectedOptionNumber = optionNumber;
-      }
-    });
-    return selectedOptionNumber;
-  };
-
-  const isOptionGroupSelected = isOptionNumberSelected();
-
-  // Sorting function to sort groupedOptions based on total price
-  const sortOptions =  () => {
-    // getResourceNumbers(options[0].resourceNumber.split("-")[0])
-
-    const sortedOptions = Object.entries(groupedOptions).sort(
-      ([, optionsA], [, optionsB]) => {
-        const isPublicA = optionsA.some((option) => option.isPublic);
-        const isPublicB = optionsB.some((option) => option.isPublic);
-  
-        // First, sort by isPublic (true comes before false)
-        if (isPublicA && !isPublicB) return -1;
-        if (!isPublicA && isPublicB) return 1;
-  
-        // If both are the same in terms of isPublic, sort by total estimated price
-        const totalEstPriceA = optionsA.reduce(
-          (acc, option) => acc + option.estPrice,
-          0
-        );
-        const totalEstPriceB = optionsB.reduce(
-          (acc, option) => acc + option.estPrice,
-          0
-        );
-  
-        return totalEstPriceB - totalEstPriceA; // Descending order by price
-      }
-    );
-  
-    return sortedOptions;
-  };
-  
-  // Use sortedGroupedOptions in the component
-  const sortedGroupedOptions = sortOptions();
-  
-
-  const toggleSortOrder = () => {
-    setSortOrder((prevOrder) => (prevOrder === "desc" ? "desc" : "desc"));
+    setAllOptions(sortedOptions);
   };
 
   return (
     <div>
       <button
-        // onClick={() => getResourceNumbers(options[0].resourceNumber.split("-")[0])}
-        onClick={() => sortOptions()  }
+        onClick={sortOptions}
         className="bg-gray-200 p-2 rounded mb-4"
       >
-        Sort {sortOrder === "desc" ? "Largest to Smallest" : "Smallest to Largest"}
+        Sort by total price
       </button>
 
       <div className="flex flex-wrap -mx-2">
-        { sortedGroupedOptions.map(([optionNumber, groupedOptions], index) => {
-          const totalEstPrice = groupedOptions.reduce(
+        {groupedOptions.map(({ optionNumber, options }, index) => {
+          const totalEstPrice = options.reduce(
             (acc, option) => acc + option.estPrice,
             0
           );
@@ -204,12 +112,10 @@ const OptionsSelector = ({ options }) => {
             <OptionCard
               key={optionNumber}
               optionNumber={index + 1}
-              options={groupedOptions}
+              options={options}
               totalEstPrice={totalEstPrice}
               isActive={activeOptionNumber === optionNumber}
-              isMostValued={optionNumber === mostValuedPublicOptionNumber}
-              isSelected={optionNumber === isOptionGroupSelected}
-              isPublic={isOptionGroupPublic.has(optionNumber)}
+              isPublic={options.some((option) => option.isPublic)}
               onClick={() => setActiveOptionNumber(optionNumber)}
               onInputChange={handleInputChange}
               updateOptionInDatabase={updateOptionInDatabase}
