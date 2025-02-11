@@ -2,6 +2,7 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import logo from "@/assets/images/logo.png";
+import VoiceflowChat from "./VoiceFlowChat";
 
 function Footer() {
   return (
@@ -17,6 +18,7 @@ function Footer() {
           </p>
         </div>
       </div>
+      <VoiceflowChat />
     </footer>
   );
 }

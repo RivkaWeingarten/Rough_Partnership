@@ -31,7 +31,9 @@ const OptionsSelector = ({ options }) => {
 
   const groupedOptions = allOptions.reduce((acc, option) => {
     const optionNumber = option.optionNumber;
-    let groupIndex = acc.findIndex(group => group.optionNumber === optionNumber);
+    let groupIndex = acc.findIndex(
+      (group) => group.optionNumber === optionNumber
+    );
 
     if (groupIndex === -1) {
       acc.push({ optionNumber, options: [] });
@@ -83,10 +85,16 @@ const OptionsSelector = ({ options }) => {
 
   const sortOptions = () => {
     const sortedOptions = [...allOptions].sort((a, b) => {
-      if (a.isPublic !== b.isPublic) {
-        return b.isPublic - a.isPublic; // Public options come first
+      const isPublicA = a.isPublic;
+      const isPublicB = b.isPublic;
+
+      // First, sort by isPublic (true comes before false)
+      if (isPublicA !== isPublicB) {
+        return isPublicB - isPublicA;
       }
-      return b.estPrice - a.estPrice; // Descending by estPrice
+
+      // If both have the same isPublic value, sort by estPrice (descending)
+      return b.estPrice - a.estPrice;
     });
 
     setAllOptions(sortedOptions);
@@ -94,10 +102,7 @@ const OptionsSelector = ({ options }) => {
 
   return (
     <div>
-      <button
-        onClick={sortOptions}
-        className="bg-gray-200 p-2 rounded mb-4"
-      >
+      <button onClick={sortOptions} className="bg-gray-200 p-2 rounded mb-4">
         Sort by total price
       </button>
 
