@@ -1,11 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { totalPriceWithDiscount, formatNumberCommas } from "@/lib/utils";
 import changeOptionData from "@/app/actions/updateOption";
 import OptionCard from "@/components/OptionCard";
 import { toast } from "react-toastify";
-import getResourceNumbers from "@/app/actions/getResourceNumbers";
 
 const updateOptionInDatabase = async (optionId, updateData) => {
   try {
@@ -29,7 +28,10 @@ const updateOptionInDatabase = async (optionId, updateData) => {
 const OptionsSelector = ({ options }) => {
   const [activeOptionNumber, setActiveOptionNumber] = useState(null);
   const [allOptions, setAllOptions] = useState(options);
-  const [sortOrder, setSortOrder] = useState("desc"); // Add sortOrder state
+
+  // const [isOptionMostValued, setIsOptionMostValued] = useState(null);
+
+  // const [sortOrder, setSortOrder] = useState("desc"); // Add sortOrder state
 
   const groupedOptions = allOptions.reduce((acc, option) => {
     const optionNumber = option.optionNumber;
@@ -128,6 +130,7 @@ const OptionsSelector = ({ options }) => {
         }
       }
     });
+
     return mostValuedOptionNumber;
   };
 
@@ -146,18 +149,16 @@ const OptionsSelector = ({ options }) => {
   const isOptionGroupSelected = isOptionNumberSelected();
 
   // Sorting function to sort groupedOptions based on total price
-  const sortOptions =  () => {
-    // getResourceNumbers(options[0].resourceNumber.split("-")[0])
-
+  const sortOptions = () => {
     const sortedOptions = Object.entries(groupedOptions).sort(
       ([, optionsA], [, optionsB]) => {
         const isPublicA = optionsA.some((option) => option.isPublic);
         const isPublicB = optionsB.some((option) => option.isPublic);
-  
+
         // First, sort by isPublic (true comes before false)
         if (isPublicA && !isPublicB) return -1;
         if (!isPublicA && isPublicB) return 1;
-  
+
         // If both are the same in terms of isPublic, sort by total estimated price
         const totalEstPriceA = optionsA.reduce(
           (acc, option) => acc + option.estPrice,
@@ -167,34 +168,29 @@ const OptionsSelector = ({ options }) => {
           (acc, option) => acc + option.estPrice,
           0
         );
-  
+
         return totalEstPriceB - totalEstPriceA; // Descending order by price
       }
     );
-  
+
     return sortedOptions;
   };
-  
+
   // Use sortedGroupedOptions in the component
   const sortedGroupedOptions = sortOptions();
-  
-
-  const toggleSortOrder = () => {
-    setSortOrder((prevOrder) => (prevOrder === "desc" ? "desc" : "desc"));
-  };
 
   return (
     <div>
       <button
         // onClick={() => getResourceNumbers(options[0].resourceNumber.split("-")[0])}
-        onClick={() => sortOptions()  }
+        onClick={() => sortOptions()}
         className="bg-gray-200 p-2 rounded mb-4"
       >
-        Sort {sortOrder === "desc" ? "Largest to Smallest" : "Smallest to Largest"}
+        Sort{" "}
       </button>
 
       <div className="flex flex-wrap -mx-2">
-        { sortedGroupedOptions.map(([optionNumber, groupedOptions], index) => {
+        {sortedGroupedOptions.map(([optionNumber, groupedOptions], index) => {
           const totalEstPrice = groupedOptions.reduce(
             (acc, option) => acc + option.estPrice,
             0
