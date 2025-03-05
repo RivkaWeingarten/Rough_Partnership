@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { totalPriceWithDiscount, formatNumberCommas } from "@/lib/utils";
+import { useState } from "react";
+import { totalPriceWithDiscount } from "@/lib/utils";
 import changeOptionData from "@/app/actions/updateOption";
 import OptionCard from "@/components/OptionCard";
 import { toast } from "react-toastify";
@@ -28,19 +30,22 @@ const updateOptionInDatabase = async (optionId, updateData) => {
 const OptionsSelector = ({ options }) => {
   const [activeOptionNumber, setActiveOptionNumber] = useState(null);
   const [allOptions, setAllOptions] = useState(options);
-
-  // const [isOptionMostValued, setIsOptionMostValued] = useState(null);
-
-  // const [sortOrder, setSortOrder] = useState("desc"); // Add sortOrder state
+  const [sortOrder, setSortOrder] = useState("desc"); // Add sortOrder state
 
   const groupedOptions = allOptions.reduce((acc, option) => {
     const optionNumber = option.optionNumber;
-    if (!acc[optionNumber]) {
-      acc[optionNumber] = [];
+    let groupIndex = acc.findIndex(
+      (group) => group.optionNumber === optionNumber
+    );
+
+    if (groupIndex === -1) {
+      acc.push({ optionNumber, options: [] });
+      groupIndex = acc.length - 1;
     }
-    acc[optionNumber].push(option);
+
+    acc[groupIndex].options.push(option);
     return acc;
-  }, {});
+  }, []);
 
   const handleOptionUpdate = (optionId, newData) => {
     const updatedOptions = allOptions.map((option) => {
@@ -130,7 +135,6 @@ const OptionsSelector = ({ options }) => {
         }
       }
     });
-
     return mostValuedOptionNumber;
   };
 
@@ -150,6 +154,8 @@ const OptionsSelector = ({ options }) => {
 
   // Sorting function to sort groupedOptions based on total price
   const sortOptions = () => {
+    // getResourceNumbers(options[0].resourceNumber.split("-")[0])
+
     const sortedOptions = Object.entries(groupedOptions).sort(
       ([, optionsA], [, optionsB]) => {
         const isPublicA = optionsA.some((option) => option.isPublic);
@@ -179,6 +185,10 @@ const OptionsSelector = ({ options }) => {
   // Use sortedGroupedOptions in the component
   const sortedGroupedOptions = sortOptions();
 
+  const toggleSortOrder = () => {
+    setSortOrder((prevOrder) => (prevOrder === "desc" ? "desc" : "desc"));
+  };
+
   return (
     <div>
       <button
@@ -187,6 +197,7 @@ const OptionsSelector = ({ options }) => {
         className="bg-gray-200 p-2 rounded mb-4"
       >
         Sort{" "}
+        {sortOrder === "desc" ? "Largest to Smallest" : "Smallest to Largest"}
       </button>
 
       <div className="flex flex-wrap -mx-2">
@@ -200,12 +211,10 @@ const OptionsSelector = ({ options }) => {
             <OptionCard
               key={optionNumber}
               optionNumber={index + 1}
-              options={groupedOptions}
+              options={options}
               totalEstPrice={totalEstPrice}
               isActive={activeOptionNumber === optionNumber}
-              isMostValued={optionNumber === mostValuedPublicOptionNumber}
-              isSelected={optionNumber === isOptionGroupSelected}
-              isPublic={isOptionGroupPublic.has(optionNumber)}
+              isPublic={options.some((option) => option.isPublic)}
               onClick={() => setActiveOptionNumber(optionNumber)}
               onInputChange={handleInputChange}
               updateOptionInDatabase={updateOptionInDatabase}

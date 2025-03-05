@@ -36,7 +36,7 @@ const CrystalAccordion = ({ resourceNumber,lot }) => {
               </span>
               <span className="inline md:hidden text-black-500"> 💎</span>
           
-            <RoughStatus options={resourceNumber.options} diamonds={resourceNumber.diamonds} />
+            <RoughStatus options={resourceNumber.sortedOptions} diamonds={resourceNumber.diamonds} />
             <span className="text-xl md:self-center">{isOpen ? "−" : "+"}</span>
 
             <a href={`/lots/${lot}/edit-crystal/${resourceNumber.resourceNumber}`}>
@@ -56,7 +56,11 @@ const CrystalAccordion = ({ resourceNumber,lot }) => {
                 No options for {resourceNumber.resourceNumber}
               </h3>
             ) : (
-              <OptionsSelector options={resourceNumber.options} />
+
+            //   <pre className="text-sm font-mono text-gray-800">
+            //   {JSON.stringify(resourceNumber.sortedOptions, null, 2)}
+            // </pre>
+              <OptionsSelector options={resourceNumber.sortedOptions} />
             )}
           </div>
         )}
