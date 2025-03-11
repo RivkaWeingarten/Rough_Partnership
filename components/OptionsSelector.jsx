@@ -1,8 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { totalPriceWithDiscount, formatNumberCommas } from "@/lib/utils";
-import { useState } from "react";
 import { totalPriceWithDiscount } from "@/lib/utils";
 import changeOptionData from "@/app/actions/updateOption";
 import OptionCard from "@/components/OptionCard";
@@ -29,8 +27,7 @@ const updateOptionInDatabase = async (optionId, updateData) => {
 
 const OptionsSelector = ({ options }) => {
   const [activeOptionNumber, setActiveOptionNumber] = useState(null);
-  const [allOptions, setAllOptions] = useState(options);
-  const [sortOrder, setSortOrder] = useState("desc"); // Add sortOrder state
+  const [allOptions, setAllOptions] = useState([...options]);
 
   const groupedOptions = allOptions.reduce((acc, option) => {
     const optionNumber = option.optionNumber;
@@ -86,123 +83,32 @@ const OptionsSelector = ({ options }) => {
     setAllOptions(updatedOptions);
   };
 
-  const isOptionNumberPublic = () => {
-    const publicOptionNumbers = new Set();
-    Object.entries(groupedOptions).forEach(([optionNumber, options]) => {
-      const isGroupPublic = options.some(
-        (option) => option.ABC === "A" && option.isPublic
-      );
-      if (isGroupPublic) {
-        publicOptionNumbers.add(optionNumber);
-      }
-    });
-    return publicOptionNumbers;
-  };
-
-  const isOptionGroupPublic = isOptionNumberPublic();
-
-  const calculateMostValuedOption = () => {
-    let mostValuedOptionNumber = null;
-    let highestValue = 0;
-    Object.entries(groupedOptions).forEach(([optionNumber, options]) => {
-      const totalEstPrice = options.reduce(
-        (acc, option) => acc + option.estPrice,
-        0
-      );
-      if (totalEstPrice > highestValue) {
-        highestValue = totalEstPrice;
-        mostValuedOptionNumber = optionNumber;
-      }
-    });
-    return mostValuedOptionNumber;
-  };
-
-  const mostValuedOptionNumber = calculateMostValuedOption();
-
-  const calculateMostValuedPublicOption = () => {
-    const publicOptionNumbers = isOptionNumberPublic();
-    let mostValuedOptionNumber = null;
-    let highestValue = 0;
-    Object.entries(groupedOptions).forEach(([optionNumber, options]) => {
-      if (publicOptionNumbers.has(optionNumber)) {
-        const totalEstPrice = options.reduce(
-          (acc, option) => acc + option.estPrice,
-          0
-        );
-        if (totalEstPrice > highestValue) {
-          highestValue = totalEstPrice;
-          mostValuedOptionNumber = optionNumber;
-        }
-      }
-    });
-    return mostValuedOptionNumber;
-  };
-
-  const mostValuedPublicOptionNumber = calculateMostValuedPublicOption();
-
-  const isOptionNumberSelected = () => {
-    let selectedOptionNumber = null;
-    Object.entries(groupedOptions).forEach(([optionNumber, options]) => {
-      if (options.every((option) => option.selected)) {
-        selectedOptionNumber = optionNumber;
-      }
-    });
-    return selectedOptionNumber;
-  };
-
-  const isOptionGroupSelected = isOptionNumberSelected();
-
-  // Sorting function to sort groupedOptions based on total price
   const sortOptions = () => {
-    // getResourceNumbers(options[0].resourceNumber.split("-")[0])
+    const sortedOptions = [...allOptions].sort((a, b) => {
+      const isPublicA = a.isPublic;
+      const isPublicB = b.isPublic;
 
-    const sortedOptions = Object.entries(groupedOptions).sort(
-      ([, optionsA], [, optionsB]) => {
-        const isPublicA = optionsA.some((option) => option.isPublic);
-        const isPublicB = optionsB.some((option) => option.isPublic);
-
-        // First, sort by isPublic (true comes before false)
-        if (isPublicA && !isPublicB) return -1;
-        if (!isPublicA && isPublicB) return 1;
-
-        // If both are the same in terms of isPublic, sort by total estimated price
-        const totalEstPriceA = optionsA.reduce(
-          (acc, option) => acc + option.estPrice,
-          0
-        );
-        const totalEstPriceB = optionsB.reduce(
-          (acc, option) => acc + option.estPrice,
-          0
-        );
-
-        return totalEstPriceB - totalEstPriceA; // Descending order by price
+      // First, sort by isPublic (true comes before false)
+      if (isPublicA !== isPublicB) {
+        return isPublicB - isPublicA;
       }
-    );
 
-    return sortedOptions;
-  };
+      // If both have the same isPublic value, sort by estPrice (descending)
+      return b.estPrice - a.estPrice;
+    });
 
-  // Use sortedGroupedOptions in the component
-  const sortedGroupedOptions = sortOptions();
-
-  const toggleSortOrder = () => {
-    setSortOrder((prevOrder) => (prevOrder === "desc" ? "desc" : "desc"));
+    setAllOptions(sortedOptions);
   };
 
   return (
     <div>
-      <button
-        // onClick={() => getResourceNumbers(options[0].resourceNumber.split("-")[0])}
-        onClick={() => sortOptions()}
-        className="bg-gray-200 p-2 rounded mb-4"
-      >
-        Sort{" "}
-        {sortOrder === "desc" ? "Largest to Smallest" : "Smallest to Largest"}
+      <button onClick={sortOptions} className="bg-gray-200 p-2 rounded mb-4">
+        Sort by total price
       </button>
 
       <div className="flex flex-wrap -mx-2">
-        {sortedGroupedOptions.map(([optionNumber, groupedOptions], index) => {
-          const totalEstPrice = groupedOptions.reduce(
+        {groupedOptions.map(({ optionNumber, options }, index) => {
+          const totalEstPrice = options.reduce(
             (acc, option) => acc + option.estPrice,
             0
           );
