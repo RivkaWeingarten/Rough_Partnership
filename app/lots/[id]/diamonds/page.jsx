@@ -3,6 +3,8 @@ import getResourceNumbers from "@/app/actions/getResourceNumbers";
 import { formatNumberCommas } from "@/lib/utils";
 import LotStats from "@/components/LotStats";
 
+import DiamondTable from "@/components/DiamondTable";
+
 const LotDiamondsDetail = async ({ params }) => {
   const { id } = params;
 
@@ -52,7 +54,7 @@ const LotDiamondsDetail = async ({ params }) => {
               </h2> */}
 
 <LotStats lot={id} />
-              <table className="table-auto w-full">
+              {/* <table className="table-auto w-full">
                 <thead>
                   <tr>
                     <th className="px-4 py-2">Resource</th>
@@ -87,7 +89,8 @@ const LotDiamondsDetail = async ({ params }) => {
                     ))
                   )}
                 </tbody>
-              </table>
+              </table> */}
+              <DiamondTable diamonds={diamondsFlat} />
             </>
           )}
         </div>
