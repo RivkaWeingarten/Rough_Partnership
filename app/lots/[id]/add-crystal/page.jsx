@@ -1,5 +1,5 @@
-import AddCrystalForm from "@/components/AddCrystalForm";
-import { notFound } from 'next/navigation';
+import AddCrystalForm from "@/components/crystals/AddCrystalForm";
+import { notFound } from "next/navigation";
 
 export default function AddCrystalPage({ params }) {
   const { id } = params;
@@ -10,4 +10,3 @@ export default function AddCrystalPage({ params }) {
 
   return <AddCrystalForm lotName={id} />;
 }
-

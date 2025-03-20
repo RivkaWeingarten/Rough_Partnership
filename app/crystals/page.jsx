@@ -1,6 +1,6 @@
 // import crystals from "@/crystals.json";
 import getResourceNumbers from "../actions/getResourceNumbers";
-import CrystalAccordion from "@/components/CrystalAccordion";
+import CrystalAccordion from "@/components/crystals/CrystalAccordion";
 
 async function CrystalsPage() {
   const { resourceNumbers, error } = await getResourceNumbers();
@@ -17,7 +17,7 @@ async function CrystalsPage() {
                   key={resourceNumber.id}
                   resourceNumber={resourceNumber}
                 />
-                              ))}
+              ))}
             </div>
           )}
         </div>

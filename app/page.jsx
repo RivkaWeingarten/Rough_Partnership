@@ -10,7 +10,6 @@ import { checkUser } from "@/lib/checkUser";
 import EmailToAuthorize from "@/components/EmailToAuthorize";
 
 async function HomePage() {
-
   const user = await checkUser();
   if (!user) {
     return (
@@ -26,20 +25,20 @@ async function HomePage() {
       <SignedIn>
         {user.role === "tbd" ? (
           <EmailToAuthorize userEmail={user.email} userName={user?.name} />
-        ) 
-        :
-         (
+        ) : (
           <div>
-            <Hero />
-            <a href="/addLot"
-            className="bg-purple-600 text-white font-semibold py-2 px-4 rounded hover:bg-purple-700 transition">Create a New Lot
+            {/* <Hero /> */}
+            <a
+              href="/addLot"
+              className="bg-purple-600 text-white font-semibold py-2 px-4 rounded hover:bg-purple-700 transition"
+            >
+              Create a New Lot
             </a>
-            <InfoBoxes/>
-           
+            <InfoBoxes />
           </div>
         )}
       </SignedIn>
-   
+
       <Footer />
     </div>
   );

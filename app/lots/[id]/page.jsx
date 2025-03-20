@@ -1,7 +1,7 @@
-import { notFound } from 'next/navigation';
-import getResourceNumbers from '@/app/actions/getResourceNumbers';
-import CrystalAccordion from '@/components/CrystalAccordion';
-import LotStats from '@/components/LotStats';
+import { notFound } from "next/navigation";
+import getResourceNumbers from "@/app/actions/getResourceNumbers";
+import CrystalAccordion from "@/components/crystals/CrystalAccordion";
+import LotStats from "@/components/LotStats";
 const LotDetail = async ({ params }) => {
   const { id } = params;
 
@@ -48,8 +48,6 @@ const LotDetail = async ({ params }) => {
 };
 
 export default LotDetail;
-
-
 
 // import getResourceNumbers from "../actions/getResourceNumbers";
 // import CrystalAccordion from "@/components/CrystalAccordion";

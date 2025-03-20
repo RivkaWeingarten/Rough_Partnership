@@ -3,7 +3,7 @@ import getResourceNumbers from "@/app/actions/getResourceNumbers";
 import { formatNumberCommas } from "@/lib/utils";
 import LotStats from "@/components/LotStats";
 
-import DiamondTable from "@/components/DiamondTable";
+import DiamondTable from "@/components/diamonds/DiamondTable";
 
 const LotDiamondsDetail = async ({ params }) => {
   const { id } = params;
@@ -25,7 +25,9 @@ const LotDiamondsDetail = async ({ params }) => {
       </div>
     );
   }
-  const diamondsFlat = resourceNumbers.flatMap(roughItem => roughItem.diamonds);
+  const diamondsFlat = resourceNumbers.flatMap(
+    (roughItem) => roughItem.diamonds
+  );
 
   // Calculate the total actTotalList and estTotalPrice for all diamonds
   const totalList = diamondsFlat.reduce(
@@ -53,7 +55,7 @@ const LotDiamondsDetail = async ({ params }) => {
 
               </h2> */}
 
-<LotStats lot={id} />
+              <LotStats lot={id} />
               {/* <table className="table-auto w-full">
                 <thead>
                   <tr>

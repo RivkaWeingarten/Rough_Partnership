@@ -4,17 +4,15 @@ import {
   checkResourceNumberExists,
   addDiamondRecord,
   updateDiamondRecord,
-  deleteDiamondRecord
+  deleteDiamondRecord,
 } from "@/app/actions/addDiamond";
 import { formatNumberCommas } from "@/lib/utils";
-import EditOptionForm from "@/components/EditOptionForm";
+import EditOptionForm from "@/components/options/EditOptionForm";
 import getRap from "@/app/actions/getRap";
 import { totalPriceWithDiscount } from "@/lib/utils";
 import optionsProgram from "@/roughOptionsPrograms.json";
 
-
-import OptionsTableComponent from "@/components/OptionsTableComponent";
-
+import OptionsTableComponent from "@/components/options/OptionsTableComponent";
 
 const OptionCard = ({
   optionNumber,
@@ -72,22 +70,16 @@ const OptionCard = ({
         // Step 2: Update the public status of each option based on the new value
         options.forEach((option) => {
           handleOptionUpdate(option.id, { isPublic: newIsPublic });
-        
         });
-     
-       // Return the new public status to update the state
-     
+
+        // Return the new public status to update the state
+
         return newIsPublic;
-
-    
       });
-
-     
     } catch (error) {
       toast.error(`Error: ${error.message}`);
     }
-    setIsOptionMostValued(  () => isMostValued)
-
+    setIsOptionMostValued(() => isMostValued);
   };
 
   const handleSelectClick = async () => {
@@ -98,29 +90,41 @@ const OptionCard = ({
 
       // Conditional logic for deleting records based on the count of selected options
       if (countOptions === 1) {
-        const existsB = await checkResourceNumberExists(options[0].roughResourceNumber + "B");
+        const existsB = await checkResourceNumberExists(
+          options[0].roughResourceNumber + "B"
+        );
         if (existsB) {
           await deleteDiamondRecord(options[0].roughResourceNumber + "B");
         }
-        const existsC = await checkResourceNumberExists(options[0].roughResourceNumber + "C");
+        const existsC = await checkResourceNumberExists(
+          options[0].roughResourceNumber + "C"
+        );
         if (existsC) {
           await deleteDiamondRecord(options[0].roughResourceNumber + "C");
         }
-        const existsD = await checkResourceNumberExists(options[0].roughResourceNumber + "D");
+        const existsD = await checkResourceNumberExists(
+          options[0].roughResourceNumber + "D"
+        );
         if (existsD) {
           await deleteDiamondRecord(options[0].roughResourceNumber + "D");
         }
       } else if (countOptions === 2) {
-        const existsC = await checkResourceNumberExists(options[0].roughResourceNumber + "C");
+        const existsC = await checkResourceNumberExists(
+          options[0].roughResourceNumber + "C"
+        );
         if (existsC) {
           await deleteDiamondRecord(options[0].roughResourceNumber + "C");
         }
-        const existsD = await checkResourceNumberExists(options[0].roughResourceNumber + "D");
+        const existsD = await checkResourceNumberExists(
+          options[0].roughResourceNumber + "D"
+        );
         if (existsD) {
           await deleteDiamondRecord(options[0].roughResourceNumber + "D");
         }
       } else if (countOptions === 3) {
-        const existsD = await checkResourceNumberExists(options[0].roughResourceNumber + "D");
+        const existsD = await checkResourceNumberExists(
+          options[0].roughResourceNumber + "D"
+        );
         if (existsD) {
           await deleteDiamondRecord(options[0].roughResourceNumber + "D");
         }
@@ -128,7 +132,6 @@ const OptionCard = ({
 
       // Step 2: Set all options in the current option group to select = true
       const selectedOptions = options.map((option) => {
-
         handleOptionUpdate(option.id, { selected: true, isPublic: true });
 
         return {
@@ -150,8 +153,6 @@ const OptionCard = ({
           roughResourceNumber: option.roughResourceNumber,
         };
       });
-
-      
 
       //  Step 3: Update Diamonds table
       for (const option of selectedOptions) {
@@ -299,7 +300,7 @@ const OptionCard = ({
           </span>
         </div>
 
-       <div className="flex flex-wrap">
+        <div className="flex flex-wrap">
           <div className="w-full p-1">
             <div className="bg-gray-100 p-2 rounded-lg shadow-sm text-xs">
               <table className="w-full text-left">
@@ -362,7 +363,7 @@ const OptionCard = ({
               </table>
             </div>
           </div>
-        </div> 
+        </div>
         {/* {/* <OptionsTableComponent options={options}/> */}
       </div>
 
