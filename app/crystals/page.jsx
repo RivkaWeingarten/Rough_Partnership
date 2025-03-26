@@ -1,6 +1,8 @@
 // import crystals from "@/crystals.json";
 import getResourceNumbers from "../actions/getResourceNumbers";
 import CrystalAccordion from "@/components/CrystalAccordion";
+import checkUser from "@/lib/checkUser";
+
 
 async function CrystalsPage() {
   const { resourceNumbers, error } = await getResourceNumbers();

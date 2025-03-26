@@ -29,6 +29,7 @@ const OptionCard = ({
   updateOptionInDatabase,
   resetAllOptions,
   handleOptionUpdate,
+  userCompany,
 }) => {
   const [inputValues, setInputValues] = useState(
     options.reduce((acc, option) => {
@@ -266,7 +267,7 @@ const OptionCard = ({
             Option {optionNumber}
           </h1>
 
-          <button
+          {userCompany==="HS" ? (<button
             onClick={handleIsPublicClick}
             className={`px-2 py-1 text-xs rounded-md ${
               // isOptionPublic ? 'bg-green-500 text-white' : 'bg-gray-500 text-white'
@@ -276,7 +277,8 @@ const OptionCard = ({
             }`}
           >
             {isOptionPublic ? "Make Private" : "Share"}
-          </button>
+
+          </button>):""}
           {isOptionMostValued && isOptionPublic && (
             <span className="text-green-500 text-sm font-bold">
               $ BEST VALUE

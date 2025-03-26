@@ -1,10 +1,11 @@
-"use client";
 
-import { useState } from "react";
+
+import { useState,useEffect } from "react";
 import { totalPriceWithDiscount } from "@/lib/utils";
 import changeOptionData from "@/app/actions/updateOption";
 import OptionCard from "@/components/OptionCard";
 import { toast } from "react-toastify";
+import { checkUser } from "@/lib/checkUser";
 
 const updateOptionInDatabase = async (optionId, updateData) => {
   try {
@@ -25,12 +26,16 @@ const updateOptionInDatabase = async (optionId, updateData) => {
   }
 };
 
-const OptionsSelector = ({ options }) => {
+
+
+const OptionsSelector = ({ options, user }) => {
+  // const [userInfo, setUserInfo] = useState(user);
   const [activeOptionNumber, setActiveOptionNumber] = useState(null);
   const [allOptions, setAllOptions] = useState([...options]);
-
+  // const [userInfo, setUserInfo] = useState(null);
   const [refreshKey, setRefreshKey] = useState(0); // New state for forcing re-render
 
+  
   const groupedOptions = allOptions
     .reduce((acc, option) => {
       const optionNumber = option.optionNumber;
@@ -197,6 +202,8 @@ const OptionsSelector = ({ options }) => {
               updateOptionInDatabase={updateOptionInDatabase}
               resetAllOptions={resetAllOptions}
               handleOptionUpdate={handleOptionUpdate}
+              userCompany={user?.company}
+              userRole={user?.role}
             />
           );
         })}

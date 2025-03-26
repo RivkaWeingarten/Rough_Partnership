@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import getResourceNumbers from '@/app/actions/getResourceNumbers';
 import CrystalAccordion from '@/components/CrystalAccordion';
 import LotStats from '@/components/LotStats';
+import { checkUser } from "@/lib/checkUser";
 const LotDetail = async ({ params }) => {
   const { id } = params;
 
@@ -23,6 +24,9 @@ const LotDetail = async ({ params }) => {
     );
   }
 
+  const user = await checkUser();
+
+
   return (
     <div>
       <section className="px-4 py-6">
@@ -37,6 +41,7 @@ const LotDetail = async ({ params }) => {
                   key={resourceNumber.id}
                   resourceNumber={resourceNumber}
                   lot={id}
+                  user={user}
                 />
               ))}
             </div>
