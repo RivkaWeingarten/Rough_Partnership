@@ -1,10 +1,9 @@
 "use client";
 import { useState } from "react";
-
-import OptionsSelector from "../options/OptionsSelector";
+import OptionsSelector from "./OptionsSelector";
 import RoughStatus from "./RoughStatus";
 
-const CrystalAccordion = ({ resourceNumber, lot }) => {
+const CrystalAccordion = ({ resourceNumber, lot, user }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -61,7 +60,10 @@ const CrystalAccordion = ({ resourceNumber, lot }) => {
               //   <pre className="text-sm font-mono text-gray-800">
               //   {JSON.stringify(resourceNumber.sortedOptions, null, 2)}
               // </pre>
-              <OptionsSelector options={resourceNumber.sortedOptions} />
+              <OptionsSelector
+                options={resourceNumber.sortedOptions}
+                user={user}
+              />
             )}
           </div>
         )}
