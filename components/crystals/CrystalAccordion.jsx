@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import OptionsSelector from "./OptionsSelector";
+import OptionsSelector from "../options/OptionsSelector";
 import RoughStatus from "./RoughStatus";
 
 const CrystalAccordion = ({ resourceNumber, lot, user }) => {
