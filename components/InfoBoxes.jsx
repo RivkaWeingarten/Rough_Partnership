@@ -27,20 +27,15 @@ async function InfoBoxes() {
                     link: `/lots/${lot.lotName}`,
                     backgroundColor: "bg-black",
                   }}
-                  // buttonInfo2={{
-                  //   link: `/lots/${lot.lotName}/add-crystal`,
-                  //   backgroundColor: "bg-green-400",
-                  // }}
+                  buttonInfo2={{
+                    link: `/lots/${lot.lotName}/edit-lot`,
+                    backgroundColor: "bg-green-400",
+                  }}
                   buttonInfo3={{
                     link: `/lots/${lot.lotName}/diamonds`,
                     backgroundColor: "bg-purple-400",
                   }}
                 >
-                  {/* Value: {formatNumberCommas(lot.totalPrice)} {""}
-                  Total List: {formatNumberCommas(lot.totalTtlList)}
-                {'  '}{formatNumberCommas((100 - (lot.totalPrice / lot.totalTtlList) * 100))} % 
-                   Cost: {formatNumberCommas(lot.totalCost)} */}
-
                   <LotStats lot={lot.lotName} />
                 </InfoBox>
               </div>

@@ -1,15 +1,17 @@
 "use client";
 import { useState, useRef } from "react";
-import OptionOnAddCrystalForm from "./OptionOnAddCrystalForm";
+// import OptionOnAddCrystalForm from "../OptionOnAddCrystalForm";
+import OptionOnAddCrystalForm from "../options/OptionOnAddCrystalForm";
 import updateCrystal from "@/app/actions/updateCrystal";
 import options from "@/roughOptionsPrograms.json";
 import { toast } from "react-toastify";
-import  getRap  from "@/app/actions/getRap";
-
+import getRap from "@/app/actions/getRap";
+import { useRouter } from "next/navigation";
 import { formatNumberCommas, totalEstPrice } from "@/lib/utils";
-import OptionsSelector from "./OptionsSelector";
+import OptionsSelector from "../options/OptionsSelector";
 
 function EditCrystalForm({ resourceData }) {
+  const router = useRouter();
   const formRef = useRef(null);
   const maxOptionNumber =
     resourceData.options.length > 0
@@ -40,12 +42,10 @@ function EditCrystalForm({ resourceData }) {
       company: "",
     };
 
-
     setOptionArray([...optionArray, newOption]);
     setStones([...stones, { id: "A", visible: true }]);
     setOptionGroupNumber(optionGroupNumber + 1);
   };
-
 
   const nextStonePart = (currentStonePart) => {
     let currentStonePartLetter = currentStonePart[0];
@@ -72,19 +72,25 @@ function EditCrystalForm({ resourceData }) {
     const optionsDataPromises = optionArray.flatMap((stone, stoneIndex) => {
       return letters.map(async (letter) => {
         // Log start of each iteration
-        console.log(`Starting Processing for Stone: ${stoneIndex}, Letter: ${letter}`);
+        console.log(
+          `Starting Processing for Stone: ${stoneIndex}, Letter: ${letter}`
+        );
 
         const estWeight = formData.get(`estWeight.${letter}.${stoneIndex}`);
         const notes = formData.get(`notes.${letter}.${stoneIndex}`);
 
         // If no estWeight, skip
         if (!estWeight) {
-          console.log(`Skipping because estWeight is empty for Stone: ${stoneIndex}, Letter: ${letter}`);
+          console.log(
+            `Skipping because estWeight is empty for Stone: ${stoneIndex}, Letter: ${letter}`
+          );
           return null;
         }
 
         try {
-          const programName = formData.get(`estProgram.${letter}.${stoneIndex}`);
+          const programName = formData.get(
+            `estProgram.${letter}.${stoneIndex}`
+          );
           const program = options.find((opt) => opt.program === programName);
 
           if (!program) {
@@ -92,30 +98,47 @@ function EditCrystalForm({ resourceData }) {
             return null;
           }
 
-          const estShape = program.estShape || '';
-          const estProgram = program.program || '';
-          const company = program.company || '';
+          const estShape = program.estShape || "";
+          const estProgram = program.program || "";
+          const company = program.company || "";
           const isPublic = company === "KW" ? true : false;
 
           // Log fetched values
-          console.log(`Fetched Values for Stone: ${stoneIndex}, Letter: ${letter}`, {
-            estShape,
-            estProgram,
-            company,
-            isPublic
-          });
+          console.log(
+            `Fetched Values for Stone: ${stoneIndex}, Letter: ${letter}`,
+            {
+              estShape,
+              estProgram,
+              company,
+              isPublic,
+            }
+          );
 
           // Extract remaining form values
-          const estColor = formData.get(`estColor.${letter}`) || formData.get("roughColor");
-          const estClarity = formData.get(`estClarity.${letter}`) || formData.get("roughClarity");
-          const estPlusMinusRColor = formData.get(`estPlusMinusRColor.${letter}`) || formData.get("plusMinusRColor");
-          const estPlusMinusRClarity = formData.get(`estPlusMinusRClarity.${letter}`) || formData.get("plusMinusRClarity");
+          const estColor =
+            formData.get(`estColor.${letter}`) || formData.get("roughColor");
+          const estClarity =
+            formData.get(`estClarity.${letter}`) ||
+            formData.get("roughClarity");
+          const estPlusMinusRColor =
+            formData.get(`estPlusMinusRColor.${letter}`) ||
+            formData.get("plusMinusRColor");
+          const estPlusMinusRClarity =
+            formData.get(`estPlusMinusRClarity.${letter}`) ||
+            formData.get("plusMinusRClarity");
 
           // Fetch list price
-          const listPrice = await getRap(estShape, estWeight, estColor, estClarity);
+          const listPrice = await getRap(
+            estShape,
+            estWeight,
+            estColor,
+            estClarity
+          );
 
           // Log list price
-          console.log(`Fetched List Price for Stone: ${stoneIndex}, Letter: ${letter}: ${listPrice}`);
+          console.log(
+            `Fetched List Price for Stone: ${stoneIndex}, Letter: ${letter}: ${listPrice}`
+          );
 
           // Return option data
           return {
@@ -142,7 +165,9 @@ function EditCrystalForm({ resourceData }) {
     });
 
     // Await promises and log results
-    const optionsData = (await Promise.all(optionsDataPromises)).flat().filter(Boolean);
+    const optionsData = (await Promise.all(optionsDataPromises))
+      .flat()
+      .filter(Boolean);
 
     // Log the final optionsData array
     console.log("Final Options Data:", optionsData);
@@ -150,13 +175,17 @@ function EditCrystalForm({ resourceData }) {
     // Add to formData and submit
     formData.append("optionsData", JSON.stringify(optionsData));
     console.log("Final FormData:", formData);
-    const { data, error } = await updateCrystal(formData, resourceData.resourceNumber);;
-    
+    const { data, error } = await updateCrystal(
+      formData,
+      resourceData.resourceNumber
+    );
+
     if (error) {
       toast.error(error);
     } else {
       toast.success(`Updated resource number: ${data.resourceNumber}`);
       formRef.current?.reset();
+      router.push(`/lots/${data.lotNumber}/`);
     }
   };
   // function addAction(event) {
@@ -168,12 +197,12 @@ function EditCrystalForm({ resourceData }) {
   return (
     <>
       <section className="bg-blue-50">
-      <a
-            href={`/lots/${resourceData.lotNumber}`}
-            className="bg-purple-600 text-white font-semibold py-2 px-4 rounded hover:bg-purple-700 transition"
-          >
-            Go to Lot {resourceData.lotNumber}
-          </a>
+        <a
+          href={`/lots/${resourceData.lotNumber}`}
+          className="bg-purple-600 text-white font-semibold py-2 px-4 rounded hover:bg-purple-700 transition"
+        >
+          Go to Lot {resourceData.lotNumber}
+        </a>
         <div className="container m-auto max-w-2xl py-24">
           <div className="bg-white px-6 py-8 mb-4 shadow-md rounded-md border m-4 md:m-0">
             {/* <form ref={formRef} onSubmit={addAction}> */}
@@ -314,9 +343,7 @@ function EditCrystalForm({ resourceData }) {
                   (Will inherit if left Blank) {"  "}
                 </span>
                 {["A", "B", "C", "D"].map((stone) => (
-                  
                   <div>
-                
                     <div className="mb-4 flex flex-wrap items-center space-y-4 sm:space-y-0 sm:space-x-4">
                       <label className="block text-gray-700 font-bold mb-2 sm:mb-0 sm:w-auto w-full">
                         {stone} Color
@@ -325,7 +352,6 @@ function EditCrystalForm({ resourceData }) {
                         id={`estColor.${stone}`}
                         name={`estColor.${stone}`}
                         className="border rounded w-full sm:w-20 py-2 px-3"
-                       
                       >
                         <option value=""></option>
                         <option value="D">D</option>
@@ -383,9 +409,8 @@ function EditCrystalForm({ resourceData }) {
                     </div>
                   </div>
                 ))}
-        
+
                 <div className="mb-4 bg-blue-50 p-4">
-             
                   <div>
                     {resourceData.options.length === 0 ? (
                       optionArray.map((option, index) => (
@@ -430,7 +455,6 @@ function EditCrystalForm({ resourceData }) {
               >
                 Add Another Option
               </button>
-     
 
               <div className="text-center mt-6">
                 <button

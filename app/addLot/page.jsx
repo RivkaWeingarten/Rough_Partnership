@@ -1,9 +1,8 @@
 // import crystals from "@/crystals.json";
 
-import AddLotForm from "@/components/AddLotForm";
+import AddLotForm from "@/components/lots/AddLotForm";
 
 async function AddLot() {
-
   return (
     <div>
       <section className="px-4 py-6">

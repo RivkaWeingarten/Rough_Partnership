@@ -11,13 +11,11 @@ const EditOptionForm = ({ option, onClose, onSubmit }) => {
     });
   };
 
-    const handleSubmit = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     onSubmit(formValues); // Pass updated option values back to parent
     onClose(); // Close the popup
   };
-
-  
 
   return (
     <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50">

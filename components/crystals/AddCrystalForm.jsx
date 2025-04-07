@@ -5,9 +5,12 @@ import options from "@/roughOptionsPrograms.json";
 import { toast } from "react-toastify";
 import addCrystal from "@/app/actions/addCrystal";
 import getRap from "@/app/actions/getRap";
-import OptionOnAddCrystalForm from "./OptionOnAddCrystalForm";
+import OptionOnAddCrystalForm from "../OptionOnAddCrystalForm";
+import { useRouter } from "next/navigation"; // Import the router
 
 function AddCrystalForm({ lotName }) {
+  const router = useRouter(); // Initialize router
+
   const formRef = useRef(null);
   const [stones, setStones] = useState([{ id: "A", visible: true }]);
   const [currentModel, setCurrentModel] = useState(1);
@@ -56,56 +59,81 @@ function AddCrystalForm({ lotName }) {
     const formData = new FormData(event.target);
 
     const letters = ["A", "B", "C", "D"];
-  
+
     // Collect all option data for each stone
     const optionsDataPromises = optionArray.flatMap((stone, stoneIndex) => {
       return letters.map(async (letter) => {
         // Log start of each iteration
-        console.log(`Starting Processing for Stone: ${stoneIndex}, Letter: ${letter}`);
-        
+        console.log(
+          `Starting Processing for Stone: ${stoneIndex}, Letter: ${letter}`
+        );
+
         const estWeight = formData.get(`estWeight.${letter}.${stoneIndex}`);
         const notes = formData.get(`notes.${letter}.${stoneIndex}`);
-  
+
         // If no estWeight, skip
         if (!estWeight) {
-          console.log(`Skipping because estWeight is empty for Stone: ${stoneIndex}, Letter: ${letter}`);
+          console.log(
+            `Skipping because estWeight is empty for Stone: ${stoneIndex}, Letter: ${letter}`
+          );
           return null;
         }
-  
+
         try {
-          const programName = formData.get(`estProgram.${letter}.${stoneIndex}`);
-          const program = optionArray.find((opt) => opt.program === programName);
-  
+          const programName = formData.get(
+            `estProgram.${letter}.${stoneIndex}`
+          );
+          const program = optionArray.find(
+            (opt) => opt.program === programName
+          );
+
           if (!program) {
             console.warn(`Program not found: ${programName}`);
             return null;
           }
-  
-          const estShape = program.estShape || '';
-          const estProgram = program.program || '';
-          const company = program.company || '';
+
+          const estShape = program.estShape || "";
+          const estProgram = program.program || "";
+          const company = program.company || "";
           const isPublic = company === "KW" ? true : false;
-  
+
           // Log fetched values
-          console.log(`Fetched Values for Stone: ${stoneIndex}, Letter: ${letter}`, {
-            estShape,
-            estProgram,
-            company,
-            isPublic
-          });
-  
+          console.log(
+            `Fetched Values for Stone: ${stoneIndex}, Letter: ${letter}`,
+            {
+              estShape,
+              estProgram,
+              company,
+              isPublic,
+            }
+          );
+
           // Extract remaining form values
-          const estColor = formData.get(`estColor.${letter}`) || formData.get("roughColor");
-          const estClarity = formData.get(`estClarity.${letter}`) || formData.get("roughClarity");
-          const estPlusMinusRColor = formData.get(`estPlusMinusRColor.${letter}`) || formData.get("plusMinusRColor");
-          const estPlusMinusRClarity = formData.get(`estPlusMinusRClarity.${letter}`) || formData.get("plusMinusRClarity");
-  
+          const estColor =
+            formData.get(`estColor.${letter}`) || formData.get("roughColor");
+          const estClarity =
+            formData.get(`estClarity.${letter}`) ||
+            formData.get("roughClarity");
+          const estPlusMinusRColor =
+            formData.get(`estPlusMinusRColor.${letter}`) ||
+            formData.get("plusMinusRColor");
+          const estPlusMinusRClarity =
+            formData.get(`estPlusMinusRClarity.${letter}`) ||
+            formData.get("plusMinusRClarity");
+
           // Fetch list price
-          const listPrice = await getRap(estShape, estWeight, estColor, estClarity);
-  
+          const listPrice = await getRap(
+            estShape,
+            estWeight,
+            estColor,
+            estClarity
+          );
+
           // Log list price
-          console.log(`Fetched List Price for Stone: ${stoneIndex}, Letter: ${letter}: ${listPrice}`);
-  
+          console.log(
+            `Fetched List Price for Stone: ${stoneIndex}, Letter: ${letter}: ${listPrice}`
+          );
+
           // Return option data
           return {
             ABC: letter,
@@ -128,25 +156,29 @@ function AddCrystalForm({ lotName }) {
         }
       });
     });
-  
+
     // Await promises and log results
-    const optionsData = (await Promise.all(optionsDataPromises)).flat().filter(Boolean);
-  
+    const optionsData = (await Promise.all(optionsDataPromises))
+      .flat()
+      .filter(Boolean);
+
     // Log the final optionsData array
     console.log("Final Options Data:", optionsData);
-  
+
     // Add to formData and submit
     formData.append("optionsData", JSON.stringify(optionsData));
-  
+
     const { data, error } = await addCrystal(formData, lotName);
     if (error) {
       toast.error(error);
     } else {
       toast.success(`Added resource number: ${data.resourceNumber}`);
+
       formRef.current?.reset();
+      router.push(`/${lotName}`);
     }
   };
-  
+
   return (
     <section className="bg-blue-50">
       <div className="container m-auto max-w-2xl py-24">
